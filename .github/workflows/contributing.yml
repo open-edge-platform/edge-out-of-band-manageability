@@ -6,6 +6,7 @@
 name: Contributing Guide Reminder
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened]
   issues:
