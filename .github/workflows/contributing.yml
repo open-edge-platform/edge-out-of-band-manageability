@@ -17,6 +17,8 @@ jobs:
   remind-contributing:
     permissions:
       contents: read
+      issues: write
+      pull-requests: write
     name: Remind Contributor
     runs-on: ubuntu-latest
     steps:
