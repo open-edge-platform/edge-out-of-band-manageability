@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2025 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+
+version: 2
+enable-beta-ecosystems: true
+updates:
+  # Enable version updates for Go modules
+  - package-ecosystem: "gomod"
+    directory: "/"
+    # Only update patch versions to reduce the chance of regressions getting introduced
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "Go modules"
+    reviewers:
+      - "dmytroye"
+
+  # Enable version updates for Terraform
+  - package-ecosystem: "terraform"
+    directories:
+      - "/terraform/edge-network"
+      - "/terraform/orchestrator"
+      - "/terraform/edge-storage-pool"
+      - "/pod-configs/orchestrator/cluster"
+      - "/pod-configs/orchestrator/orch-load-balancer"
+      - "/pod-configs/orchestrator/orch-route53"
+      - "/pod-configs/orchestrator/pull-through-cache-proxy"
+      - "/pod-configs/module/lb-target-group-attachment"
+      - "/pod-configs/module/application-load-balancer"
+      - "/pod-configs/module/load-balancer"
+      - "/pod-configs/buckets"
+    # Only update patch versions to reduce the chance of regressions getting introduced
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "terraform"
+    reviewers:
+      - "dmytroye"
+
+  # Enable version updates for Helm
+  - package-ecosystem: "helm"
+    directories:
+      - "/argocd-internal/applications"
+      - "/argocd-internal/root-app"
+      - "/argocd/applications"
+      - "/argocd/root-app"
+    # Only update patch versions to reduce the chance of regressions getting introduced
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "Helm"
+    reviewers:
+      - "dmytroye"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directories:
+      - "/installer"
+    # Only update patch versions to reduce the chance of regressions getting introduced
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "Dockerfile"
+    reviewers:
+      - "dmytroye"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    # Only update patch versions to reduce the chance of regressions getting introduced
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "Github Actions"
+    reviewers:
+      - "dmytroye"

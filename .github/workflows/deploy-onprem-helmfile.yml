@@ -1,0 +1,303 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+---
+
+name: Deploy On-Prem (Helmfile)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      orch_profile:
+        description: "Profile: onprem-eim or onprem-vpro"
+        default: "onprem-eim"
+        type: choice
+        options:
+          - onprem-eim
+          - onprem-vpro
+
+  pull_request:
+    branches:
+      - "*"
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-onprem-eim:
+    name: Deploy On-Prem EIM
+    runs-on: ubuntu-24.04-8core-32GB
+    timeout-minutes: 30
+    env:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup dnsmasq
+        run: |
+          chmod +x ci/ven/dnsmasq-setup-helmfile.sh
+          ci/ven/dnsmasq-setup-helmfile.sh cluster.onprem setup
+          ci/ven/dnsmasq-setup-helmfile.sh cluster.onprem config
+
+      - name: Install Libvirt
+        env:
+          LIBVIRT_DEFAULT_URI: 'qemu:///system'
+        run: |
+          cd ci/ven
+          ./libvirt-setup.sh
+
+      - name: Deploy on-prem orchestrator (helmfile pre-orch + post-orch) - EIM
+        uses: ./.github/actions/deploy_onprem_helmfile
+        with:
+          orch_profile: onprem-eim
+          docker_username: ${{ secrets.SYS_DOCKERHUB_USERNAME }}
+          docker_password: ${{ secrets.SYS_DOCKERHUB_RO }}
+
+      - name: Read test-automation dependency Version
+        id: read-test-automation-version
+        shell: bash
+        run: |
+          version=$(yq '.test-automation.version' ${{ github.workspace }}/.test-dependencies.yaml | tr -d '\n' | xargs)
+          echo "test-automation version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout edge-manage-test-automation repository with submodules
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          repository: open-edge-platform/edge-manage-test-automation
+          path: edge-manage-test-automation
+          ref: ${{ steps.read-test-automation-version.outputs.version }}
+          submodules: 'recursive'
+          token: ${{ secrets.SYS_EMF_GH_TOKEN }}
+          persist-credentials: false
+
+      - name: Setup test dependencies
+        working-directory: edge-manage-test-automation
+        shell: bash
+        run: |
+          git submodule update --init --recursive
+
+          # Install asdf
+          git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
+          . "$HOME/.asdf/asdf.sh"
+          echo ". $HOME/.asdf/asdf.sh" >> "$HOME/.bashrc"
+
+          # Install tools and Python venv
+          make asdf-install
+          make orch-cli
+          make venv_edge-manage-test-automation
+
+          # Install terraform for Pico VEN provisioning (skip tflint)
+          pushd repos/ven/pico
+          asdf plugin add terraform || true
+          asdf install terraform
+          popd
+
+          # xsltproc needed by libvirt terraform provider for domain XML customization
+          sudo apt-get install -y xsltproc
+
+      - name: Wait for DKAM Full_server.crt and signed_ipxe.efi readiness
+        shell: bash
+        run: |
+          source pre-orch/functions.sh
+          check_and_download_dkam_certs "cluster.onprem"
+
+      - name: Generate SSH ECDSA key pair
+        shell: bash
+        run: |
+          ssh-keygen -t ecdsa -b 521 -C "p_host_manager" -f "${HOME}/.ssh/id_ecdsa"
+          chmod 600 "${HOME}/.ssh/id_ecdsa"
+          chmod 644 "${HOME}/.ssh/id_ecdsa.pub"
+
+      # EIM Only tests::
+      # From tenancy configuration to Node Onboarding
+      - name: Run EIM Only workflow Tests (VEN)
+        id: robot-tests
+        timeout-minutes: 10
+        working-directory: edge-manage-test-automation
+        env:
+          REQUESTS_CA_BUNDLE: /usr/local/share/ca-certificates/orch-ca.crt
+          LIBVIRT_DEFAULT_URI: 'qemu:///system'
+        shell: bash
+        run: |
+          . "$HOME/.asdf/asdf.sh"
+          KC_ADMIN_PWD=$(kubectl -n orch-platform get secrets platform-keycloak -o jsonpath='{.data.admin-password}' | base64 -d)
+          yq eval ".orchestrator.admin_password = \"${KC_ADMIN_PWD}\"" -i orchestrator-configs/on-prem.yaml
+          yq eval '.infra.host.edgenode.hw_info.libvirt_pool_name = "default"'    -i tests/emf_decomp/data/cf_data_sample.yaml
+          yq eval '.infra.host.edgenode.hw_info.libvirt_network_name = "default"' -i tests/emf_decomp/data/cf_data_sample.yaml
+
+          source venv_edge-manage-test-automation/bin/activate
+          robot -L DEBUG --pythonpath . \
+            --name "EIM" \
+            -d robot_output/eim_only \
+            -V orchestrator-configs/on-prem.yaml \
+            -v PATH_TO_REMOTE_USER_PUB_KEY:${HOME}/.ssh/id_ecdsa.pub \
+            --exitonfailure \
+            --include vip \
+            tests/emf_decomp/eim/orch_cli_eim_workflow.robot
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: on-prem-eim-${{ github.event_name }}-${{ github.event.number }}-robot-report
+          path: |
+            edge-manage-test-automation/robot_output/**/*
+
+      - name: Collect diagnostics
+        if: always()
+        uses: ./.github/actions/collect_diagnostics_helmfile
+        with:
+          k8s_diagnostics_args: "--errors-only --include-logs --output-html --output-json"
+
+      - name: Print onprem ven console log
+        if: always()
+        run: |
+          sudo ls -lrt /var/log/libvirt/qemu/ || true
+          sudo cat /var/log/libvirt/qemu/libvirt-pico-node-console.log || true
+
+      - name: Collect Bootkit and caddy Log
+        if: always()
+        continue-on-error: true
+        run: |
+          sudo cat /var/log/dnsmasq.log || true
+          kubectl get workflow -n orch-infra || true
+          kubectl -n orch-infra describe deployment onboarding-manager | grep TINKER_ARTIFACT_NAME || true
+          chmod +x ./ci/kpi/bootkit-log.sh
+          ./ci/kpi/bootkit-log.sh "cluster.onprem" "project-1" "p-edge-operator-1" "Samp1ePassw@rd"
+
+  deploy-onprem-vpro:
+    name: Deploy On-Prem vPro
+    runs-on: ubuntu-24.04-4core-16GB
+    timeout-minutes: 30
+    env:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup dnsmasq
+        run: |
+          chmod +x ci/ven/dnsmasq-setup-helmfile.sh
+          ci/ven/dnsmasq-setup-helmfile.sh cluster.onprem setup
+          ci/ven/dnsmasq-setup-helmfile.sh cluster.onprem config
+
+      - name: Install Libvirt
+        env:
+          LIBVIRT_DEFAULT_URI: 'qemu:///system'
+        run: |
+          cd ci/ven
+          ./libvirt-setup.sh
+
+      - name: Deploy on-prem orchestrator (helmfile pre-orch + post-orch) - vPro
+        uses: ./.github/actions/deploy_onprem_helmfile
+        with:
+          orch_profile: onprem-vpro
+          docker_username: ${{ secrets.SYS_DOCKERHUB_USERNAME }}
+          docker_password: ${{ secrets.SYS_DOCKERHUB_RO }}
+
+      - name: Create Clean Ubuntu VM
+        uses: ./.github/actions/create_clean_vm
+
+      - name: Set VM variables
+        shell: bash
+        run: |
+          echo "VM_NAME=vpro-ubuntu-vm" >> $GITHUB_ENV
+          echo "VM_IP=${VM_IP}" >> $GITHUB_ENV
+          echo "VM_SERIAL=${VM_SERIAL}" >> $GITHUB_ENV
+          echo "SSH_USER=user" >> $GITHUB_ENV
+          echo "SSH_PASSWORD=user" >> $GITHUB_ENV
+          echo "VM Details:"
+          echo "  Name: vpro-ubuntu-vm"
+          echo "  IP: ${VM_IP}"
+          echo "  Serial: ${VM_SERIAL}"
+          echo "  SSH: ssh user@${VM_IP}"
+
+      - name: Read test-automation dependency Version
+        id: read-test-automation-version
+        shell: bash
+        run: |
+          version=$(yq '.test-automation.version' ${{ github.workspace }}/.test-dependencies.yaml | tr -d '\n' | xargs)
+          echo "test-automation version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout edge-manage-test-automation repository with submodules
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          repository: open-edge-platform/edge-manage-test-automation
+          path: edge-manage-test-automation
+          ref: ${{ steps.read-test-automation-version.outputs.version }}
+          submodules: 'recursive'
+          token: ${{ secrets.SYS_EMF_GH_TOKEN }}
+          persist-credentials: false
+
+      - name: Setup test dependencies
+        working-directory: edge-manage-test-automation
+        shell: bash
+        run: |
+          git submodule update --init --recursive
+
+          make orch-cli
+          make venv_edge-manage-test-automation
+
+      # EIM-vPro tests:
+      # EIM-vPro-01: Assess Tenancy Management
+      # CLI-EIM-vPRO-02: Configure Orchestrator CLI
+      # CLI_EIM-vPRO-03: Create Login session to run CLI commands
+      # CLI-EIM-vPRO-04: Verify Orch deployment for EIM-vPRO profile
+      # CLI-EIM-vPRO-05: Register Host
+      # CLI-EIM-vPRO-07-A: Install Agents on Ubuntu VM for VIP via script
+      - name: Run Tests eim-vpro VIP workflow (01-05, 07-A)
+        id: robot-tests
+        timeout-minutes: 20
+        working-directory: edge-manage-test-automation
+        env:
+          REQUESTS_CA_BUNDLE: /usr/local/share/ca-certificates/orch-ca.crt
+          LIBVIRT_DEFAULT_URI: 'qemu:///system'
+        shell: bash
+        run: |
+          KC_ADMIN_PWD=$(kubectl -n orch-platform get secrets platform-keycloak -o jsonpath='{.data.admin-password}' | base64 -d)
+          yq eval ".orchestrator.admin_password = \"${KC_ADMIN_PWD}\"" -i orchestrator-configs/on-prem.yaml
+          yq eval '.infra.host.edgenode.hw_info.libvirt_pool_name = "default"'    -i tests/emf_decomp/data/cf_data_sample.yaml
+          yq eval '.infra.host.edgenode.hw_info.libvirt_network_name = "default"' -i tests/emf_decomp/data/cf_data_sample.yaml
+          yq eval ".infra.host.edgenode.hw_info.serial = \"${VM_SERIAL}\"" -i tests/emf_decomp/data/cf_data_sample.yaml
+
+          source venv_edge-manage-test-automation/bin/activate
+          robot -L DEBUG --pythonpath . \
+            --name "EIM-vPRO" \
+            -d robot_output/eim_vpro \
+            -V orchestrator-configs/on-prem.yaml \
+            -v PXE_IP:${VM_IP} \
+            -v PXE_HOSTNAME:${VM_NAME} \
+            -v NODE_SSH_USER:${SSH_USER} \
+            -v NODE_SSH_PASSWORD:${SSH_PASSWORD} \
+            --exitonfailure \
+            --include vip \
+            tests/emf_decomp/eim_vpro/orch_cli_eim_vpro.robot
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: on-prem-vpro-${{ github.event_name }}-${{ github.event.number }}-robot-report
+          path: |
+            edge-manage-test-automation/robot_output/**/*
+
+      - name: Collect diagnostics
+        if: always()
+        uses: ./.github/actions/collect_diagnostics_helmfile
+        with:
+          k8s_diagnostics_args: "--errors-only --include-logs --output-html --output-json"

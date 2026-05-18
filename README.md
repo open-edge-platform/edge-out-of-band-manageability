@@ -1,0 +1,253 @@
+# Intel Edge Out-of-Band Manageability
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-edge-platform/edge-out-of-band-manageability/badge)](https://scorecard.dev/viewer/?uri=github.com/open-edge-platform/edge-out-of-band-manageability)
+
+## Overview
+
+Welcome to Intel Edge Out-of-Band Manageability (EOM), a comprehensive solution designed
+to streamline and enhance the deployment and management of infrastructure and
+applications at the edge. This framework leverages cutting-edge technologies to
+provide robust solutions for hardware onboarding, secure workload deployment,
+and cluster lifecycle management, all centered around Kubernetes-based
+application deployment for edge computing.
+
+## Primary Product: Edge Orchestrator
+
+At the center of Intel Edge Out-of-Band Manageability is Edge Orchestrator, the primary
+solution to manage edge environments efficiently and securely. It encompasses a
+range of features that cater to the unique demands of edge computing, ensuring
+seamless integration and operation across diverse hardware and software
+landscapes. Edge Orchestrator is designed to be the central hub for managing
+edge infrastructure at scale across
+geographically distributed edge sites. It offers multitenancy and
+identity & access management for tenants,
+dashboards for quick views of status & issue identification, and management of
+all infrastructure components including edge nodes (i.e.
+hosts).
+
+```mermaid
+flowchart TD
+
+    %% LEFT: Cloud
+    subgraph Cloud[" "]
+    direction LR
+    APPS@{ shape: cloud, label: "Apps"  } ~~~
+    Infra@{ shape: cloud, label: "Infra"  }
+    end
+
+    %% EDGE SITES
+    SF["Edge Nodes at Customer Site<br>(San Francisco)"]
+    ATL["Edge Nodes at Customer Site<br>(Atlanta)"]
+    NYC["Edge Nodes at Customer Site<br>(New York City)"]
+
+    Cloud -.-> SF
+    Cloud -.-> ATL
+    Cloud -.-> NYC
+
+    %% RIGHT SIDE
+    subgraph EO["Edge Orchestrator"]
+        direction TB
+        subgraph Orch[" "]
+        direction TB
+        WebUI[Web-UI]
+
+        subgraph OrchestrationLayer[" "]
+            direction LR
+            InfraMgmt["Edge Infrastructure<br>Management"] 
+        end
+
+        Platform["Foundational Platform Services<br/>(Identity and Access Mgmt, Secrets Mgmt,<br/>API Gateway, Observability, etc.)"]
+
+        INFRA[On-Prem Datacenter]
+end
+        %% EDGE NODE
+
+        subgraph EdgeNode["Edge Node"]
+            direction TB
+            subgraph AppsRow[" "]
+                direction LR
+                CA1[Customer Apps] ~~~
+                CA2[Customer Apps] ~~~
+                CA3[Customer Apps]
+            end
+
+            K8s[Kubernetes* Cluster]
+            OS[Edge Node OS, Packages, Agents]
+            HW["Edge Node Hardware<br/>(Intel® Xeon® processor, Intel® Core™ processor)"]
+
+            %% Invisible ordering inside Edge Node
+            AppsRow ~~~ K8s
+            K8s ~~~ OS
+            OS ~~~ HW
+        end
+        %% Invisible ordering inside EO
+        WebUI ~~~ Orch
+        Orch ~~~ Platform
+        Platform ~~~ INFRA
+        INFRA ~~~ EdgeNode
+    end
+
+
+    Cloud -.-> |"Cloud-based<br>Orchestration"|EO
+
+
+    %% Styling
+    classDef grey fill:#eeeeee,stroke:#666,stroke-width:1.5px
+    classDef blue fill:#1f4fbf,color:#fff,stroke:#1f4fbf;
+    classDef lightblue fill:#1fb6d9,color:#000,stroke:#1fb6d9;
+    classDef transparent fill:#00000000,stroke-width:0px;
+
+    class EO,EdgeNode,AppsRow,Orch,OrchestrationLayer, grey;
+    class WebUI,AppOrch,ClusterOrch,InfraMgmt,Platform,INFRA blue;
+    class CA1,CA2,CA3,K8s,OS,HW lightblue;
+    class Cloud transparent;
+
+    %% Define the style for big nodes
+    classDef bigNode font-size:30px,stroke-width:2px,padding:10px;
+    
+    %% Apply the style
+    class APPS,Infra bigNode;
+```
+
+### Key Components
+
+Edge Orchestrator is used to centrally manage all Edge Nodes at sites and perform lifecycle management of OS
+in the managed nodes. Edge Orchestrator consists of the following main components, and it is
+deployable on-premises or in the cloud:
+
+- [Edge Infrastructure Manager](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/developer_guide/infra_manager/index.html):
+Policy-based secure life cycle management of a fleet of edge nodes/devices at scale, spread across distributed
+locations allowing onboarding, provisioning, inventory management, upgrades and more.
+- [UI](https://github.com/open-edge-platform/orch-ui): The web user interface for the Edge Orchestrator, allowing the
+user to manage most of the features of the product in an intuitive, visual, manner without having to trigger a series
+of APIs individually.
+- [CLI](https://github.com/open-edge-platform/orch-cli): The command line interface for the Edge Orchestrator,
+allowing the user to manage most of the features of the product in an intuitive,
+text-based manner without having to trigger a series of APIs individually.
+- [Platform Services](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/developer_guide/platform/index.html):
+A collection of services that support the deployment and management of the Edge Orchestrator, including identity and
+access management, multitenancy management, ingress route configuration, secrets and certificate management, cloud and
+on-prem infrastructure life-cycle management and more.
+
+## Get Started
+
+There are multiple ways to begin to learn about, use, or contribute to Edge Orchestrator.
+
+- Start by deploying your own
+  orchestrator [in the cloud or on-premises](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/deployment_guide/index.html)
+- Read the latest [Release Notes](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/release_notes/index.html)
+  including KPIs, container and Helm chart listing and 3rd party dependencies
+- Explore the [User Guide](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/user_guide/index.html) and
+[API Reference](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/api/index.html)
+- Learn about all components, their architecture and inner workings, and how to contribute in
+  the [Developer Guide](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/developer_guide/index.html)
+- [CI based Developer workflow](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/developer_guide/contributor_guide/index.html):
+  make changes to 1 or more components of the Edge Orchestrator, locally build your change, test locally with prebuilt
+  images of the rest of the components, and then submit a PR to the component CI and the
+  [EOM CI](https://github.com/open-edge-platform/edge-out-of-band-manageability/actions).
+- [Buildall based Developer workflow](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/developer_guide/platform/buildall.html):
+  if you do not wish to use our CI and pre-built images, the [buildall](https://github.com/open-edge-platform/edge-out-of-band-manageability/tree/main/buildall)
+  script can clone all the repos, build the Helm chart and container images required to deploy the Edge Orchestrator
+  from source, push the artifacts to a repository of your choice, and locally test in your developer environment.
+
+### Repositories
+
+There are several repos that make up Intel Edge Out-of-Band Manageability in the Open Edge Platform.
+Here is brief description of all the repos.
+
+#### Intel Edge Out-of-Band Manageability (deploy)
+
+- [edge-out-of-band-manageability](https://github.com/open-edge-platform/edge-out-of-band-manageability):
+  The central hub for deploying the Edge Orchestrator. This repo includes
+  Helmfile-based deployment scripts (`pre-orch/` and `post-orch/`) necessary
+  for setting up the orchestrator in various environments, including on-premise
+  and cloud-based setups. Once the Edge Orchestrator is operational, all Edge Node software is deployed via the Edge Orchestrator.
+
+#### Edge Infrastructure Manager
+
+- [infra-core](https://github.com/open-edge-platform/infra-core) (top-level repo): Core services
+  for the Edge Infrastructure Manager including inventory, APIs, tenancy and more.
+- [infra-managers](https://github.com/open-edge-platform/infra-managers):
+  Provides life-cycle management services for edge infrastructure resources via a collection of resource managers.
+- [infra-onboarding](https://github.com/open-edge-platform/infra-onboarding):
+  A collection of services that enable remote onboarding and provisioning of Edge Nodes.
+- [infra-external](https://github.com/open-edge-platform/infra-external):
+  Vendor extensions for the Edge Infrastructure Manager allowing integration with 3rd party software
+- [infra-charts](https://github.com/open-edge-platform/infra-charts): Helm
+  charts for deploying Edge Infrastructure Manager services.
+
+#### User Interface
+
+- [orch-ui](https://github.com/open-edge-platform/orch-ui): The web user interface for the Edge Orchestrator, allowing
+  the user to manage most of the features of the product in a single intuitive GUI.
+- [orch-metadata-broker](https://github.com/open-edge-platform/orch-metadata-broker):
+  Service responsible for storing and retrieving metadata, enabling the UI to populate dropdowns with previously
+  entered metadata keys and values.
+
+#### Command Line Interface
+
+- [orch-cli](https://github.com/open-edge-platform/orch-cli): The command line interface for the Edge Orchestrator, allowing
+  the user to manage most of the features of the product in a single intuitive CLI.
+
+#### Platform Services
+
+- [orch-utils](https://github.com/open-edge-platform/orch-utils): The orch-utils
+  repository provides various utility functions and tools that support the
+  deployment and management of the Edge Orchestrator. This includes Kubernetes
+  jobs, Helm charts, Dockerfiles, and Go code for tasks such as namespace
+  creation, policy management, Traefik route configuration, IAM and multitenancy.
+
+#### Documentation
+
+- [edge-manage-docs](https://github.com/open-edge-platform/edge-manage-docs): Edge
+  Orchestrator documentation includes deployment, user, and developer guides; and API references, tutorials,
+  troubleshooting, and software architecture specifications. You can also visit our
+  [documentation](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/index.html).
+
+#### Common Services
+
+- [orch-library](https://github.com/open-edge-platform/orch-library): Offers
+  shared libraries and resources for application and cluster lifecycle
+  management.
+- [cluster-extensions](https://github.com/open-edge-platform/cluster-extensions):
+  Provides extensions for edge clusters managed by Edge Orchestrator. A standard set of extensions are deployed on all
+  edge clusters.
+  An optional set of extensions can be deployed on-demand.
+
+#### Edge Nodes / Hosts
+
+- [edge-node-agents](https://github.com/open-edge-platform/edge-node-agents):
+  Collection of all the agents installed in the Edge Node OS that work together with the Edge Orchestrator to manage
+  Edge Node functionality.
+- [virtual-edge-node](https://github.com/open-edge-platform/virtual-edge-node):
+  Collection of software based emulators and simulators for physical Edge Nodes used in test environments.
+
+#### Secure Edge Deployment
+
+- [trusted-compute](https://github.com/open-edge-platform/trusted-compute):
+  Security extensions that utilize hardware security capabilities in Edge Nodes to enable continuous monitoring
+  and end-user application (workload) protection through isolated execution.
+
+#### Shared CI
+
+- [orch-ci](https://github.com/open-edge-platform/orch-ci):
+  Central hub for continuous integration (CI) workflows and actions shared across all repos.
+
+## Community and Support
+
+To learn more about the project, its community, and governance, visit
+the Intel Edge Out-of-Band Manageability community [Discussions page](https://github.com/open-edge-platform/edge-out-of-band-manageability/discussions)
+
+To submit issues, use the [Issues page](https://github.com/open-edge-platform/edge-out-of-band-manageability/issues)
+
+Discover more about the [Open Edge Platform](https://github.com/open-edge-platform).
+
+## License
+
+Intel Edge Out-of-Band Manageability is licensed
+under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=open-edge-platform/edge-out-of-band-manageability&type=Date)](https://www.star-history.com/#open-edge-platform/edge-out-of-band-manageability&Date)
