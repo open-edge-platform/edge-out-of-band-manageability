@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Computed values dumped at deploy time
+.computed-values/
+
+# Console logs with timestamps
+logs/

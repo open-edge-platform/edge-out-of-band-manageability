@@ -1,0 +1,150 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# EIM-only environment — Part 2: Feature flags (component on/off)
+# Settings are in onprem-eim-settings.yaml.gotmpl
+# Disabled defaults are in defaults-disabled.yaml.gotmpl
+#
+# This file only lists releases that are ENABLED for EIM profile,
+# plus controlled variables (env-var driven settings).
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Enabled releases
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─── Platform ────────────────────────────────────────────────────────────────
+auth-service:
+  # Kept enabled. Although metadata-broker and cluster-manager now self-resolve
+  # the active project via orch-library projectcontext (so resolve-project-id
+  # is no longer chained in front of them), auth-service is still required by:
+  #   - alerting-monitor (resolve-project-id middleware) when deployed
+  #   - observability node-side ingress (forward-auth-service Middleware)
+  enabled: true
+cert-manager:
+  enabled: true
+certificate-file-server:
+  enabled: true
+component-status:
+  enabled: true
+copy-ca-cert-boots-to-gateway:
+  enabled: true
+copy-ca-cert-boots-to-infra:
+  enabled: true
+copy-ca-cert-gateway-to-cattle:
+  enabled: true
+copy-ca-cert-gateway-to-infra:
+  enabled: true
+external-secrets:
+  enabled: true
+ingress-haproxy:
+  enabled: true
+keycloak-operator:
+  enabled: true
+metadata-broker:
+  enabled: true
+haproxy-ingress-pxe-boots:
+  enabled: true
+platform-autocert:
+  enabled: true
+platform-keycloak:
+  enabled: true
+reloader:
+  enabled: true
+rs-proxy:
+  enabled: true
+secrets-config:
+  enabled: true
+secret-wait-tls-orch:
+  enabled: true
+secret-wait-tls-boots:
+  enabled: true
+traefik-extra-objects:
+  enabled: true
+traefik-pre:
+  enabled: true
+token-fs:
+  enabled: true
+
+# ─── Database operators ──────────────────────────────────────────────────────
+postgresql-operator:
+  enabled: true
+postgresql-cluster:
+  enabled: true
+postgresql-secrets:
+  enabled: true
+
+# ─── Edge Infra ──────────────────────────────────────────────────────────────
+infra-core:
+  enabled: true
+infra-managers:
+  enabled: true
+infra-external:
+  enabled: true
+  amt:
+    mps:
+      enabled: true
+    rps:
+      enabled: true
+    dm-manager:
+      enabled: true
+copy-keycloak-admin-to-infra:
+  enabled: true
+
+# ─── UI (EIM subset) ────────────────────────────────────────────────────────
+web-ui-root:
+  enabled: true
+web-ui-infra:
+  enabled: true
+web-ui-admin:
+  enabled: true
+
+# ─── Audit ───────────────────────────────────────────────────────────────────
+audit:
+  enabled: true
+
+# ─── Tenancy (v2) ────────────────────────────────────────────────────────────
+# The new tenancy-manager (Postgres + Ent backed REST service from)
+# embeds the data model and API mapping; the legacy tenancy-datamodel,
+# tenancy-api-mapping charts have been removed.
+tenancy-manager:
+  enabled: true
+  # When EMF_DEFAULT_TENANCY=true the tenancy-manager Pod creates a default org
+  # and project on first startup.
+  bootstrap:
+    enabled:     {{ env "EMF_DEFAULT_TENANCY" | default "false" }}
+    orgName:     "default"
+    projectName: "default"
+  # Same gate also enables the tenant-admin Keycloak user + group bootstrap
+  # (ports the remaining functionality of the legacy tenancy-init Job:
+  # creates `tenant-admin` user, stores its password in a Secret, and adds
+  # it to the org admin / project edge groups).
+  bootstrapTenantAdmin:
+    enabled: {{ env "EMF_DEFAULT_TENANCY" | default "false" }}
+keycloak-tenant-controller:
+  enabled: true
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+namespace-label:
+  enabled: true
+squid-proxy:
+  enabled: {{ env "EMF_ENABLE_SQUID" | default "false" }}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Controlled variables (env-var driven)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─── Infra onboarding overrides ─────────────────────────────────────────────
+infra-onboarding:
+  enabled: true
+  skipOSProvisioning: {{ env "EMF_SKIP_OS_PROVISIONING" | default "false" }}
+  disableCoProfile: true
+  disableO11yProfile: true
+
+# ─── CORS ────────────────────────────────────────────────────────────────────
+cors:
+  enabled: {{ env "EMF_CORS_ENABLED" | default "true" }}
+
+# ─── UI settings ─────────────────────────────────────────────────────────────
+ui:
+  ingressInfraUi: {{ env "EMF_UI_INGRESS_INFRA" | default "false" }}
