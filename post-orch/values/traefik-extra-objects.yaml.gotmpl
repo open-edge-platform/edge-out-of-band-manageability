@@ -23,6 +23,7 @@ keycloakMatchHost: Host(`keycloak.{{ .Values.clusterDomain }}`)
 clusterOrchNodeMatchHost: Host(`cluster-orch-node.{{ .Values.clusterDomain }}`)
 logsNodeMatchHost: Host(`logs-node.{{ .Values.clusterDomain }}`)
 metricsNodeMatchHost: Host(`metrics-node.{{ .Values.clusterDomain }}`)
+metricsNodeCliMatchHost: Host(`metrics-node-cli.{{ .Values.clusterDomain }}`)
 giteaMatchHost: Host(`gitea.{{ .Values.clusterDomain }}`)
 # Tenancy v2: enable the api.* host route. The tenancy-v2 IngressRoutes
 # (project-prefix stripping) are always rendered by the chart.
