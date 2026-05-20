@@ -6,6 +6,7 @@
 name: Contributing Guide Reminder
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened]
   issues:
@@ -17,6 +18,8 @@ jobs:
   remind-contributing:
     permissions:
       contents: read
+      issues: write
+      pull-requests: write
     name: Remind Contributor
     runs-on: ubuntu-latest
     steps:
