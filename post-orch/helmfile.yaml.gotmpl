@@ -100,7 +100,7 @@ releases:
     namespace: postgresql-operator
     chart: cnpg/cloudnative-pg
     wait: true
-    version: 0.27.1
+    version: 0.28.2
     values:
       - values/postgresql-operator.yaml
     condition: postgresql-operator.enabled
@@ -137,7 +137,7 @@ releases:
     namespace: cert-manager
     chart: jetstack/cert-manager
     wait: true
-    version: 1.19.3
+    version: 1.20.2
     timeout: 300
     values:
       - values/cert-manager.yaml.gotmpl
@@ -154,7 +154,7 @@ releases:
     namespace: orch-secret
     chart: external-secrets/external-secrets
     wait: true
-    version: 2.0.1
+    version: 2.5.0
     values:
       - values/external-secrets.yaml
     condition: external-secrets.enabled
@@ -169,7 +169,7 @@ releases:
     namespace: istio-system
     chart: istio/base
     wait: true
-    version: 1.29.1
+    version: 1.29.2
     values:
       - values/istio-base.yaml
     condition: istio-base.enabled
@@ -241,7 +241,7 @@ releases:
     namespace: istio-system
     chart: istio/istiod
     wait: true
-    version: 1.29.1
+    version: 1.29.2
     values:
       - values/istiod.yaml.gotmpl
     needs:
@@ -318,7 +318,7 @@ releases:
     namespace: orch-database
     chart: cnpg/cluster
     wait: true
-    version: 0.6.0
+    version: 0.6.1
     values:
       - values/postgresql-cluster.yaml.gotmpl
     condition: postgresql-cluster.enabled
@@ -356,7 +356,7 @@ releases:
     namespace: istio-system
     chart: kiali/kiali-server
     wait: true
-    version: 2.22.0
+    version: 2.25.0
     values:
       - values/kiali.yaml
     condition: kiali.enabled
@@ -617,7 +617,7 @@ releases:
     namespace: orch-gateway
     chart: traefik/traefik
     wait: true
-    version: 39.0.6
+    version: 40.2.0
     values:
       - values/traefik.yaml.gotmpl
     condition: traefik.enabled
