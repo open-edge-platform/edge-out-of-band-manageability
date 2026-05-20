@@ -203,7 +203,7 @@ releases:
     namespace: kyverno
     chart: kyverno/kyverno
     wait: true
-    version: 3.7.1
+    version: 3.8.0
     values:
       - values/kyverno.yaml
     condition: kyverno.enabled
@@ -256,7 +256,7 @@ releases:
     namespace: orch-platform
     chart: stakater/reloader
     wait: true
-    version: 2.2.3
+    version: 2.2.11
     values:
       - values/reloader.yaml
     condition: reloader.enabled
@@ -880,7 +880,7 @@ releases:
     namespace: orch-infra
     chart: edge-orch/infra/charts/infra-external
     wait: true
-    version: 2.14.5
+    version: 2.14.6
     values:
       - values/infra-external.yaml.gotmpl
     condition: infra-external.enabled
@@ -948,7 +948,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-infra
     wait: true
-    version: 4.0.7
+    version: 4.0.8
     values:
       - values/web-ui-infra.yaml.gotmpl
     condition: web-ui-infra.enabled
@@ -969,7 +969,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-root
     wait: true
-    version: 4.0.12
+    version: 4.0.13
     values:
       - values/web-ui-root.yaml.gotmpl
     condition: web-ui-root.enabled
