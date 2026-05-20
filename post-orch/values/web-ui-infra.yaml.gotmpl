@@ -10,7 +10,7 @@ global:
   auth:
     enabled: true
     keycloak:
-      url: "https://keycloak.{{ .Values.clusterDomain }}"
+      url: "https://keycloak.{{ .Values.clusterDomain }}/auth"
       client_id: "webui-client"
       realm: "master"
   session_timeout: 3600
