@@ -440,7 +440,7 @@ releases:
     namespace: orch-platform
     chart: edge-orch/common/charts/secrets-config
     wait: true
-    version: 26.0.2
+    version: 26.0.3
     values:
       - values/secrets-config.yaml.gotmpl
     condition: secrets-config.enabled
@@ -479,7 +479,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch-rs/common/charts/secret-wait
     wait: true
-    version: 26.0.2
+    version: 26.0.3
     values:
       - values/secret-wait-tls-orch.yaml
     condition: secret-wait-tls-orch.enabled
@@ -675,7 +675,7 @@ releases:
     namespace: orch-iam
     chart: edge-orch/common/charts/tenancy-manager
     wait: true
-    version: 26.1.3
+    version: 26.1.5
     values:
       - values/tenancy-manager.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -843,7 +843,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch/common/charts/auth-service
     wait: true
-    version: 26.1.12
+    version: 26.1.13
     values:
       - values/auth-service.yaml.gotmpl
       - values/resource-overrides.yaml
