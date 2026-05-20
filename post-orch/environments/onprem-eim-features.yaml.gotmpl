@@ -148,3 +148,13 @@ cors:
 # ─── UI settings ─────────────────────────────────────────────────────────────
 ui:
   ingressInfraUi: {{ env "EMF_UI_INGRESS_INFRA" | default "false" }}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Optional Releases to ENABLE (disabled in defaults, enable if required)
+# ═══════════════════════════════════════════════════════════════════════════════
+observability-crds:
+  enabled: false
+edgenode-observability:
+  enabled: false
+edgenode-dashboards:
+  enabled: false
