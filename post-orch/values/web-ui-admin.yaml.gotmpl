@@ -8,7 +8,7 @@ global:
     imagePullSecrets: []
   auth:
     keycloak:
-      url: "https://keycloak.{{ .Values.clusterDomain }}"
+      url: "https://keycloak.{{ .Values.clusterDomain }}/auth"
 
 api:
   clusterOrch: "https://cluster-orch.{{ .Values.clusterDomain }}"

@@ -50,7 +50,7 @@ postgresql:
 # profile components are deployed; this prevents projects from getting stuck
 # waiting for controllers that are not actually running.
 tenancyManager:
-  oidcServerURL: "http://platform-keycloak.orch-platform.svc:8080/realms/master"
+  oidcServerURL: "http://platform-keycloak.orch-platform.svc:8080/auth/realms/master"
   # Bootstrap default org/project on first startup
   # Empty values disable the bootstrap; idempotent on subsequent restarts.
   {{- if (.Values | get "tenancy-manager.bootstrap.enabled" false) }}
