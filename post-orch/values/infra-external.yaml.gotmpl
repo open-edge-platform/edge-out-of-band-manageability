@@ -157,7 +157,7 @@ amt:
     params:
       # User-provided password
       # Should have One uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.
-      password: {{ env "EMF_AMT_PASSWORD" | default "" | quote }}
+      password: {{ env "EOM_AMT_PASSWORD" | default "" | quote }}
     env:
       oidc:
         oidc_server_url: "http://platform-keycloak.orch-platform.svc/realms/master"

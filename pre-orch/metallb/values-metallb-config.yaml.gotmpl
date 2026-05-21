@@ -7,7 +7,7 @@
 ## These defaults will be used by the chart unless overridden by a higher-level values file
 
 metallb-config:
-  # IPs are set via helmfile .Values (EMF_TRAEFIK_IP / EMF_HAPROXY_IP / EMF_ORCH_IP)
+  # IPs are set via helmfile .Values (EOM_TRAEFIK_IP / EOM_HAPROXY_IP / EOM_ORCH_IP)
   TraefikIP: {{ .Values.traefikIP }}
   HaproxyIP: {{ .Values.haproxyIP }}
 serviceNamespaces:

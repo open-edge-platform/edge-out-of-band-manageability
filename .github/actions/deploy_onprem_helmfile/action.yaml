@@ -56,17 +56,17 @@ runs:
         HOST_IP: ${{ steps.host-ip.outputs.host_ip }}
         ORCH_PROFILE: ${{ inputs.orch_profile }}
       run: |
-        echo "Updating pre-orch.env and post-orch.env with EMF_ORCH_IP=$HOST_IP, EMF_HELMFILE_ENV=$ORCH_PROFILE"
-        # pre-orch.env: uncomment and set EMF_ORCH_IP, comment out individual IPs
-        sed -i "s|^#EMF_ORCH_IP=.*|EMF_ORCH_IP=$HOST_IP|" pre-orch/pre-orch.env
-        sed -i "s|^EMF_TRAEFIK_IP=|#EMF_TRAEFIK_IP=|" pre-orch/pre-orch.env
-        sed -i "s|^EMF_HAPROXY_IP=|#EMF_HAPROXY_IP=|" pre-orch/pre-orch.env
-        # post-orch.env: uncomment and set EMF_ORCH_IP, comment out individual IPs, set profile
-        sed -i "s|^#EMF_ORCH_IP=.*|EMF_ORCH_IP=$HOST_IP|" post-orch/post-orch.env
-        sed -i "s|^EMF_TRAEFIK_IP=|#EMF_TRAEFIK_IP=|" post-orch/post-orch.env
-        sed -i "s|^EMF_HAPROXY_IP=|#EMF_HAPROXY_IP=|" post-orch/post-orch.env
-        sed -i "s|^EMF_HELMFILE_ENV=.*|EMF_HELMFILE_ENV=$ORCH_PROFILE|" post-orch/post-orch.env
-        sed -i "s|^EMF_AMT_PASSWORD=.*|EMF_AMT_PASSWORD=P@ssw0rd|" post-orch/post-orch.env
+        echo "Updating pre-orch.env and post-orch.env with EOM_ORCH_IP=$HOST_IP, EOM_HELMFILE_ENV=$ORCH_PROFILE"
+        # pre-orch.env: uncomment and set EOM_ORCH_IP, comment out individual IPs
+        sed -i "s|^#EOM_ORCH_IP=.*|EOM_ORCH_IP=$HOST_IP|" pre-orch/pre-orch.env
+        sed -i "s|^EOM_TRAEFIK_IP=|#EOM_TRAEFIK_IP=|" pre-orch/pre-orch.env
+        sed -i "s|^EOM_HAPROXY_IP=|#EOM_HAPROXY_IP=|" pre-orch/pre-orch.env
+        # post-orch.env: uncomment and set EOM_ORCH_IP, comment out individual IPs, set profile
+        sed -i "s|^#EOM_ORCH_IP=.*|EOM_ORCH_IP=$HOST_IP|" post-orch/post-orch.env
+        sed -i "s|^EOM_TRAEFIK_IP=|#EOM_TRAEFIK_IP=|" post-orch/post-orch.env
+        sed -i "s|^EOM_HAPROXY_IP=|#EOM_HAPROXY_IP=|" post-orch/post-orch.env
+        sed -i "s|^EOM_HELMFILE_ENV=.*|EOM_HELMFILE_ENV=$ORCH_PROFILE|" post-orch/post-orch.env
+        sed -i "s|^EOM_AMT_PASSWORD=.*|EOM_AMT_PASSWORD=P@ssw0rd|" post-orch/post-orch.env
         echo "✅ Both env files updated"
     # AMT_PASSWORD is updated here for CI testing perpose.
     # ── Pre-Orch Deploy ──────────────────────────────────────────────────────
@@ -95,9 +95,9 @@ runs:
       shell: bash
       working-directory: post-orch
       env:
-        EMF_HELMFILE_ENV: ${{ inputs.orch_profile }}
+        EOM_HELMFILE_ENV: ${{ inputs.orch_profile }}
       run: |
-        echo "▶ Starting post-orch deploy (profile: $EMF_HELMFILE_ENV) [timeout: 20m]"
+        echo "▶ Starting post-orch deploy (profile: $EOM_HELMFILE_ENV) [timeout: 20m]"
         chmod +x post-orch-deploy.sh
         timeout 1200 ./post-orch-deploy.sh install
     - name: Verify post-orch deployment
