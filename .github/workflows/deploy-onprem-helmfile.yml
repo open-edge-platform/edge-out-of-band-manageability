@@ -131,6 +131,8 @@ jobs:
           LIBVIRT_DEFAULT_URI: 'qemu:///system'
         shell: bash
         run: |
+          git branch -a
+          git fetch origin
           git checkout johnoloughlin-patch-1
           . "$HOME/.asdf/asdf.sh"
           KC_ADMIN_PWD=$(kubectl -n orch-platform get secrets platform-keycloak -o jsonpath='{.data.admin-password}' | base64 -d)
