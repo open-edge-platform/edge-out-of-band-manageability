@@ -69,7 +69,7 @@ componentStatus:
         installed: {{ or (index .Values "infra-core" "enabled" | default false) (index .Values "infra-managers" "enabled" | default false) (index .Values "infra-onboarding" "enabled" | default false) (index .Values "infra-external" "enabled" | default false) }}
 
         # OXM Profile - Microvisor-based edge infrastructure management (on-prem ONLY)
-        # Detection - pxe.enabled is true (set by EMF_ENABLE_PXE env var)
+        # Detection - pxe.enabled is true (set by EOM_ENABLE_PXE env var)
         # OXM profile is EXCLUSIVELY for on-prem deployments with ORCH_INSTALLER_PROFILE=onprem-oxm
         oxm-profile:
           installed: {{ if .Values.pxe }}{{ eq (.Values.pxe.enabled | toString) "true" }}{{ else }}false{{ end }}
@@ -93,7 +93,7 @@ componentStatus:
 
         # Provisioning - OS provisioning workflow capability
         # Detection - infra-onboarding is deployed AND skipOSProvisioning is not set to true
-        # skipOSProvisioning flag is set at infra-onboarding level (EMF_SKIP_OS_PROVISIONING)
+        # skipOSProvisioning flag is set at infra-onboarding level (EOM_SKIP_OS_PROVISIONING)
         # When skipOSProvisioning=true, provisioning is disabled (vPRO AMT-only workflow without OS provisioning)
         # Available in both vPRO (standard OS) and OXM (microvisor) profiles, unless explicitly skipped
         provisioning:

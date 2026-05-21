@@ -79,7 +79,7 @@ jobs:
           path: edge-manage-test-automation
           ref: ${{ steps.read-test-automation-version.outputs.version }}
           submodules: 'recursive'
-          token: ${{ secrets.SYS_EMF_GH_TOKEN }}
+          token: ${{ secrets.SYS_EOM_GH_TOKEN }}
           persist-credentials: false
 
       - name: Setup test dependencies
@@ -241,7 +241,7 @@ jobs:
           path: edge-manage-test-automation
           ref: ${{ steps.read-test-automation-version.outputs.version }}
           submodules: 'recursive'
-          token: ${{ secrets.SYS_EMF_GH_TOKEN }}
+          token: ${{ secrets.SYS_EOM_GH_TOKEN }}
           persist-credentials: false
 
       - name: Setup test dependencies

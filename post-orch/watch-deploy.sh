@@ -16,7 +16,7 @@ if [[ -f "$HELMFILE_DIR/post-orch.env" ]]; then
   source "$HELMFILE_DIR/post-orch.env"
   set +a
 fi
-HELMFILE_ENV="${EMF_HELMFILE_ENV:-onprem-eim}"
+HELMFILE_ENV="${EOM_HELMFILE_ENV:-onprem-eim}"
 # Get enabled releases
 releases=$(cd "$HELMFILE_DIR" && helmfile -e "$HELMFILE_ENV" list 2>/dev/null \
   | awk 'NR>1 && $3=="true" {print $1}' | sort)
