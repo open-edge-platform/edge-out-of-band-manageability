@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# Makefile — repo-wide lint orchestration for the EMF helmfile flow.
+# Makefile — repo-wide lint orchestration for the EOM helmfile flow.
 #
 # Quick start:
 #   make help           # list targets

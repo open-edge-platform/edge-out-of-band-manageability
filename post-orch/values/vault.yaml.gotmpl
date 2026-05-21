@@ -6,10 +6,10 @@ containersecuritycontext:
   allowprivilegeescalation: false
 server:
   image:
-    tag: {{ env "EMF_VAULT_IMAGE_TAG" | default "1.21.3" | quote }}
+    tag: {{ env "EOM_VAULT_IMAGE_TAG" | default "1.21.3" | quote }}
     pullPolicy: IfNotPresent
 
-  logLevel: {{ env "EMF_VAULT_LOG_LEVEL" | default "info" | quote }}
+  logLevel: {{ env "EOM_VAULT_LOG_LEVEL" | default "info" | quote }}
 
   {{- if .Values.vault }}
   ha:

@@ -53,13 +53,13 @@ repositories:
     url: https://charts.external-secrets.io
   - name: haproxy
     url: https://haproxytech.github.io/helm-charts
-{{- if eq (env "EMF_ENABLE_ISTIO" | default "false") "true" }}
+{{- if eq (env "EOM_ENABLE_ISTIO" | default "false") "true" }}
   - name: istio
     url: https://istio-release.storage.googleapis.com/charts
   - name: kiali
     url: https://kiali.org/helm-charts
 {{- end }}
-{{- if eq (env "EMF_ENABLE_KYVERNO" | default "false") "true" }}
+{{- if eq (env "EOM_ENABLE_KYVERNO" | default "false") "true" }}
   - name: kyverno
     url: https://kyverno.github.io/kyverno
 {{- end }}
@@ -70,10 +70,10 @@ repositories:
     url: ghcr.io/cloudnative-pg/charts
   - name: edge-orch
     oci: true
-    url: {{ env "EMF_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
+    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
   - name: edge-orch-rs
     oci: true
-    url: {{ env "EMF_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
+    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
 
 releases:
   #############################################################################
@@ -709,7 +709,7 @@ releases:
   # Wave 1300 — TLS boots wait + token-fs
   #
   # Default org/project bootstrap is performed by the tenancy-manager itself
-  # (controlled by EMF_DEFAULT_TENANCY → tenancy-manager.bootstrap.enabled)
+  # (controlled by EOM_DEFAULT_TENANCY → tenancy-manager.bootstrap.enabled)
   #############################################################################
 
   - name: secret-wait-tls-boots

@@ -386,13 +386,13 @@ install_pre_orch_components() {
 
     if [[ "${INSTALL_METALLB}" == "true" ]]; then
       # Validate IP configuration
-      if [[ -n "${EMF_ORCH_IP:-}" ]]; then
-        echo "✅ Single-IP mode: all services will share ${EMF_ORCH_IP}"
+      if [[ -n "${EOM_ORCH_IP:-}" ]]; then
+        echo "✅ Single-IP mode: all services will share ${EOM_ORCH_IP}"
         echo "   Traefik port: 443, HAProxy port: 9443"
-        export EMF_TRAEFIK_IP="${EMF_ORCH_IP}"
-        export EMF_HAPROXY_IP="${EMF_ORCH_IP}"
-      elif [[ -z "${EMF_TRAEFIK_IP:-}" || -z "${EMF_HAPROXY_IP:-}" ]]; then
-        echo "❌ Either EMF_ORCH_IP (single-IP) or both EMF_TRAEFIK_IP and EMF_HAPROXY_IP must be set"
+        export EOM_TRAEFIK_IP="${EOM_ORCH_IP}"
+        export EOM_HAPROXY_IP="${EOM_ORCH_IP}"
+      elif [[ -z "${EOM_TRAEFIK_IP:-}" || -z "${EOM_HAPROXY_IP:-}" ]]; then
+        echo "❌ Either EOM_ORCH_IP (single-IP) or both EOM_TRAEFIK_IP and EOM_HAPROXY_IP must be set"
         exit 1
       fi
     fi

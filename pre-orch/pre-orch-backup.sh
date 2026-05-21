@@ -26,7 +26,7 @@ POST_ORCH_DIR="$HELMFILE_DEPLOY_DIR/post-orch"
 # Shared backup directory — consumed by post-orch-deploy.sh upgrade
 UPGRADE_BACKUP_DIR="$HELMFILE_DEPLOY_DIR/upgrade-backup"
 
-# Source post-orch.env for EMF_ variables
+# Source post-orch.env for EOM_ variables
 if [[ -f "$POST_ORCH_DIR/post-orch.env" ]]; then
   set -a
   # shellcheck disable=SC1091
