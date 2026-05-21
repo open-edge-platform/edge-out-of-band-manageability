@@ -66,7 +66,7 @@ runs:
         sed -i "s|^EMF_TRAEFIK_IP=|#EMF_TRAEFIK_IP=|" post-orch/post-orch.env
         sed -i "s|^EMF_HAPROXY_IP=|#EMF_HAPROXY_IP=|" post-orch/post-orch.env
         sed -i "s|^EMF_HELMFILE_ENV=.*|EMF_HELMFILE_ENV=$ORCH_PROFILE|" post-orch/post-orch.env
-        sed -i "s|^#EMF_AMT_PASSWORD=.*|EMF_AMT_PASSWORD=P@ssw0rd|" post-orch/post-orch.env
+        sed -i "s|^EMF_AMT_PASSWORD=.*|EMF_AMT_PASSWORD=P@ssw0rd|" post-orch/post-orch.env
         echo "✅ Both env files updated"
     # AMT_PASSWORD is updated here for CI testing perpose.
     # ── Pre-Orch Deploy ──────────────────────────────────────────────────────
