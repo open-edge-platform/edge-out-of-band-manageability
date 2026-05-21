@@ -119,7 +119,7 @@ Includes:
   reloader, metadata-broker, tenancy management
 
 ```bash
-EMF_HELMFILE_ENV=onprem-eim ./post-orch-deploy.sh install
+EOM_HELMFILE_ENV=onprem-eim ./post-orch-deploy.sh install
 ```
 
 ### onprem-vpro
@@ -144,7 +144,7 @@ And **reconfigures** infra for vPro-only scenarios:
   dm-manager)
 
 ```bash
-EMF_HELMFILE_ENV=onprem-vpro ./post-orch-deploy.sh install
+EOM_HELMFILE_ENV=onprem-vpro ./post-orch-deploy.sh install
 ```
 
 ### Profile Comparison
@@ -179,9 +179,9 @@ variables defined in `post-orch.env`.
 When deploying on a Coder workspace, set all IPs to the Coder host IP in `post-orch.env`:
 
 ```bash
-EMF_ORCH_IP=<coder-host-ip>
-EMF_TRAEFIK_IP=<coder-host-ip>
-EMF_HAPROXY_IP=<coder-host-ip>
+EOM_ORCH_IP=<coder-host-ip>
+EOM_TRAEFIK_IP=<coder-host-ip>
+EOM_HAPROXY_IP=<coder-host-ip>
 ```
 
 ### Required Variables
@@ -190,17 +190,17 @@ These **must** be set before deployment:
 
 | Variable | Example | Description |
 |---|---|---|
-| `EMF_CLUSTER_DOMAIN` | `cluster.onprem` | Base domain for all services |
-| `EMF_REGISTRY` | `registry-rs...` | Chart registry |
-| `EMF_TRAEFIK_IP` | `192.168.99.30` | Traefik LB IP |
-| `EMF_HAPROXY_IP` | `192.168.99.40` | HAProxy LB IP |
-| `EMF_STORAGE_CLASS` | `openebs-hostpath` | Storage class |
+| `EOM_CLUSTER_DOMAIN` | `cluster.onprem` | Base domain for all services |
+| `EOM_REGISTRY` | `registry-rs...` | Chart registry |
+| `EOM_TRAEFIK_IP` | `192.168.99.30` | Traefik LB IP |
+| `EOM_HAPROXY_IP` | `192.168.99.40` | HAProxy LB IP |
+| `EOM_STORAGE_CLASS` | `openebs-hostpath` | Storage class |
 
-> **Multi-IP mode (default):** Set `EMF_TRAEFIK_IP` and
-> `EMF_HAPROXY_IP` to separate free IPs on your network.
+> **Multi-IP mode (default):** Set `EOM_TRAEFIK_IP` and
+> `EOM_HAPROXY_IP` to separate free IPs on your network.
 > Both services listen on `:443`.
 >
-> **Single-IP mode:** Set `EMF_ORCH_IP` instead to share
+> **Single-IP mode:** Set `EOM_ORCH_IP` instead to share
 > one IP for all services. Traefik listens on `:443` and
 > HAProxy shifts to `:9443` to avoid port conflicts.
 
@@ -208,14 +208,14 @@ These **must** be set before deployment:
 
 Enable or disable optional features in `post-orch.env`:
 
-- `EMF_ENABLE_ISTIO` — Istio service mesh + Kiali
+- `EOM_ENABLE_ISTIO` — Istio service mesh + Kiali
   (default: `false`)
-- `EMF_ENABLE_KYVERNO` — Kyverno policy engine
+- `EOM_ENABLE_KYVERNO` — Kyverno policy engine
   (default: `false`)
 
 ### Registry
 
-`EMF_REGISTRY` is the single variable from which all
+`EOM_REGISTRY` is the single variable from which all
 chart, container, and OCI registry URLs are derived.
 
 ### Proxy Settings
@@ -223,18 +223,18 @@ chart, container, and OCI registry URLs are derived.
 If your environment requires an HTTP proxy, set the
 following in `post-orch.env`:
 
-- `EMF_HTTP_PROXY` — HTTP proxy URL
-- `EMF_HTTPS_PROXY` — HTTPS proxy URL
-- `EMF_NO_PROXY` — Comma-separated bypass list
-- `EMF_EN_HTTP_PROXY` — Edge node HTTP proxy
-- `EMF_EN_HTTPS_PROXY` — Edge node HTTPS proxy
-- `EMF_EN_NO_PROXY` — Edge node proxy bypass list
+- `EOM_HTTP_PROXY` — HTTP proxy URL
+- `EOM_HTTPS_PROXY` — HTTPS proxy URL
+- `EOM_NO_PROXY` — Comma-separated bypass list
+- `EOM_EN_HTTP_PROXY` — Edge node HTTP proxy
+- `EOM_EN_HTTPS_PROXY` — Edge node HTTPS proxy
+- `EOM_EN_NO_PROXY` — Edge node proxy bypass list
 
 ### Deployment Profile
 
 Set the deployment profile in `post-orch.env`:
 
-- `EMF_HELMFILE_ENV` — Profile name
+- `EOM_HELMFILE_ENV` — Profile name
   (default: `onprem-eim`).
   Options: `onprem-eim`, `onprem-vpro`
 
@@ -253,12 +253,12 @@ vi post-orch.env
 
 At minimum, update:
 
-- `EMF_CLUSTER_DOMAIN`
-- `EMF_TRAEFIK_IP` and `EMF_HAPROXY_IP`
+- `EOM_CLUSTER_DOMAIN`
+- `EOM_TRAEFIK_IP` and `EOM_HAPROXY_IP`
   (free IPs for LoadBalancer services)
-- `EMF_HTTP_PROXY` / `EMF_NO_PROXY`
+- `EOM_HTTP_PROXY` / `EOM_NO_PROXY`
   (if behind a proxy, otherwise clear them)
-- `EMF_DOCKER_USERNAME` / `EMF_DOCKER_PASSWORD`
+- `EOM_DOCKER_USERNAME` / `EOM_DOCKER_PASSWORD`
 
 ### Step 2: Run Setup
 
@@ -287,7 +287,7 @@ To tear down the setup:
 
 ### Step 3: Deploy
 
-Set `EMF_HELMFILE_ENV` in `post-orch.env` to your
+Set `EOM_HELMFILE_ENV` in `post-orch.env` to your
 desired profile, then run:
 
 ```bash
@@ -304,7 +304,7 @@ The script will:
 You can also pass inline overrides:
 
 ```bash
-EMF_TRAEFIK_IP=10.0.1.50 ./post-orch-deploy.sh install
+EOM_TRAEFIK_IP=10.0.1.50 ./post-orch-deploy.sh install
 ```
 
 Logs are saved to

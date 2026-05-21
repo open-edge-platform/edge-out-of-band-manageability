@@ -12,9 +12,9 @@ Sets up a Kubernetes cluster (KIND, K3s, or RKE2) and optionally installs
 When deploying on a Coder workspace, set all IPs to the Coder host IP in `pre-orch.env`:
 
 ```bash
-EMF_ORCH_IP=<coder-host-ip>
-EMF_TRAEFIK_IP=<coder-host-ip>
-EMF_HAPROXY_IP=<coder-host-ip>
+EOM_ORCH_IP=<coder-host-ip>
+EOM_TRAEFIK_IP=<coder-host-ip>
+EOM_HAPROXY_IP=<coder-host-ip>
 ```
 
 ## Quick Start
@@ -42,8 +42,8 @@ All settings are in [`pre-orch.env`](pre-orch.env). CLI flags override env value
 | `INSTALL_METALLB` | `true` | Install MetalLB |
 | `INSTALL_PRE_CONFIG` | `true` | Run pre-orch-config (namespaces, secrets) |
 | `LOCALPV_VERSION` | `4.3.0` | OpenEBS LocalPV chart version |
-| `EMF_TRAEFIK_IP` | — | Traefik LB IP (for MetalLB) |
-| `EMF_HAPROXY_IP` | — | HAProxy LoadBalancer IP (required for MetalLB) |
+| `EOM_TRAEFIK_IP` | — | Traefik LB IP (for MetalLB) |
+| `EOM_HAPROXY_IP` | — | HAProxy LoadBalancer IP (required for MetalLB) |
 
 ## Skipping Components During Install
 

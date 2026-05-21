@@ -33,7 +33,7 @@ Manage pre-orch.env by:
    - **CLUSTER_PROVIDER**: `kind`, `k3s`, or `rke2`
    - **MAX_PODS_PER_NODE**: Default 110, adjust for cluster size
    - **METALLB_IP_RANGE**: Must not conflict with DHCP (e.g., "192.168.1.240-192.168.1.250")
-   - **EMF_ORCH_IP**: IP from MetalLB range for orchestrator
+   - **EOM_ORCH_IP**: IP from MetalLB range for orchestrator
    - **ENABLE_OPENEBS**: Usually `true` for persistent storage
    - **ENABLE_METALLB**: `true` for load balancer (false for K3s with built-in LB)
 3. **Update settings** as requested:
@@ -66,5 +66,5 @@ MAX_PODS_PER_NODE=200
 # Single-IP Coder deployment
 CLUSTER_PROVIDER=k3s
 METALLB_IP_RANGE="10.0.0.100-10.0.0.100"
-EMF_ORCH_IP=10.0.0.100
+EOM_ORCH_IP=10.0.0.100
 ```
