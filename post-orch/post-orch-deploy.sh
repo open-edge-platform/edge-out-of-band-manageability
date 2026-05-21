@@ -56,6 +56,11 @@ validate_config() {
     echo "❌ EMF_REGISTRY is required"
     ((errors++))
   fi
+  # Required: AMT password
+  if [[ -z "${EMF_AMT_PASSWORD:-}" ]]; then
+    echo "❌ EMF_AMT_PASSWORD is required. Set it in post-orch.env or export it before running this script."
+    ((errors++))
+  fi
   # Validate IPs
   # Single-IP mode: EMF_ORCH_IP overrides both Traefik and HAProxy IPs
   if [[ -n "${EMF_ORCH_IP:-}" ]]; then
