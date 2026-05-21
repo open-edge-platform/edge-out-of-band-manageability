@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 Intel Corporation
 #
 # SPDX-License-Identifier: Apache-2.0
-# EMF Deployment Status — shows release pass/fail status.
+# EOM Deployment Status — shows release pass/fail status.
 # Usage:
 #   ./watch-deploy.sh              # Info mode: release status only
 #   ./watch-deploy.sh --debug      # Debug mode: includes pods/jobs per release
@@ -94,7 +94,7 @@ done_count=$((deployed + failed))
 pct=0
 ((total > 0)) && pct=$((done_count * 100 / total))
 echo ""
-echo "  EMF Deployment Status  ($HELMFILE_ENV)  [$MODE]"
+echo "  EOM Deployment Status  ($HELMFILE_ENV)  [$MODE]"
 echo "  ════════════════════════════════════════════════"
 printf "  Progress: %d/%d (%d%%)   ✅ %d  ❌ %d  ⏳ %d\n" \
   "$done_count" "$total" "$pct" "$deployed" "$failed" $((pending + queued))
