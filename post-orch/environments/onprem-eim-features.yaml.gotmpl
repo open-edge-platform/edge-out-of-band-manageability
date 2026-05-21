@@ -109,10 +109,10 @@ audit:
 # tenancy-api-mapping charts have been removed.
 tenancy-manager:
   enabled: true
-  # When EMF_DEFAULT_TENANCY=true the tenancy-manager Pod creates a default org
+  # When EOM_DEFAULT_TENANCY=true the tenancy-manager Pod creates a default org
   # and project on first startup.
   bootstrap:
-    enabled:     {{ env "EMF_DEFAULT_TENANCY" | default "false" }}
+    enabled:     {{ env "EOM_DEFAULT_TENANCY" | default "false" }}
     orgName:     "default"
     projectName: "default"
   # Same gate also enables the tenant-admin Keycloak user + group bootstrap
@@ -120,7 +120,7 @@ tenancy-manager:
   # creates `tenant-admin` user, stores its password in a Secret, and adds
   # it to the org admin / project edge groups).
   bootstrapTenantAdmin:
-    enabled: {{ env "EMF_DEFAULT_TENANCY" | default "false" }}
+    enabled: {{ env "EOM_DEFAULT_TENANCY" | default "false" }}
 keycloak-tenant-controller:
   enabled: true
 
@@ -128,7 +128,7 @@ keycloak-tenant-controller:
 namespace-label:
   enabled: true
 squid-proxy:
-  enabled: {{ env "EMF_ENABLE_SQUID" | default "false" }}
+  enabled: {{ env "EOM_ENABLE_SQUID" | default "false" }}
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Controlled variables (env-var driven)
@@ -137,17 +137,17 @@ squid-proxy:
 # ─── Infra onboarding overrides ─────────────────────────────────────────────
 infra-onboarding:
   enabled: true
-  skipOSProvisioning: {{ env "EMF_SKIP_OS_PROVISIONING" | default "false" }}
+  skipOSProvisioning: {{ env "EOM_SKIP_OS_PROVISIONING" | default "false" }}
   disableCoProfile: true
   disableO11yProfile: true
 
 # ─── CORS ────────────────────────────────────────────────────────────────────
 cors:
-  enabled: {{ env "EMF_CORS_ENABLED" | default "true" }}
+  enabled: {{ env "EOM_CORS_ENABLED" | default "true" }}
 
 # ─── UI settings ─────────────────────────────────────────────────────────────
 ui:
-  ingressInfraUi: {{ env "EMF_UI_INGRESS_INFRA" | default "false" }}
+  ingressInfraUi: {{ env "EOM_UI_INGRESS_INFRA" | default "false" }}
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Optional Releases to ENABLE (disabled in defaults, enable if required)

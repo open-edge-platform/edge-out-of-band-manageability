@@ -26,7 +26,7 @@ Run pre-installation by:
 1. **Review pre-orch.env** configuration (use /pre-env-setting)
 3. **Validate configuration**:
    - CLUSTER_PROVIDER set correctly
-   - IP addresses configured (MetalLB range, EMF_ORCH_IP)
+   - IP addresses configured (MetalLB range, EOM_ORCH_IP)
    - Component flags set appropriately
 4. **Run installation**:
    ```bash
