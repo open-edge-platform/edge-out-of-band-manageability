@@ -77,7 +77,7 @@ jobs:
         with:
           repository: open-edge-platform/edge-manage-test-automation
           path: edge-manage-test-automation
-          ref: ${{ steps.read-test-automation-version.outputs.version }}
+          ref: johnoloughlin-patch-1
           submodules: 'recursive'
           token: ${{ secrets.SYS_EMF_GH_TOKEN }}
           persist-credentials: false
@@ -132,8 +132,6 @@ jobs:
         shell: bash
         run: |
           git branch -a
-          git fetch origin
-          git checkout johnoloughlin-patch-1
           . "$HOME/.asdf/asdf.sh"
           KC_ADMIN_PWD=$(kubectl -n orch-platform get secrets platform-keycloak -o jsonpath='{.data.admin-password}' | base64 -d)
           yq eval ".orchestrator.admin_password = \"${KC_ADMIN_PWD}\"" -i orchestrator-configs/on-prem.yaml
