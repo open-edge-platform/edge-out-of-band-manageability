@@ -47,49 +47,49 @@ validate_config() {
     ((errors++))
   fi
   # Required: cluster domain
-  if [[ -z "${EMF_CLUSTER_DOMAIN:-}" ]]; then
-    echo "❌ EMF_CLUSTER_DOMAIN is required"
+  if [[ -z "${EOM_CLUSTER_DOMAIN:-}" ]]; then
+    echo "❌ EOM_CLUSTER_DOMAIN is required"
     ((errors++))
   fi
   # Required: registry
-  if [[ -z "${EMF_REGISTRY:-}" ]]; then
-    echo "❌ EMF_REGISTRY is required"
+  if [[ -z "${EOM_REGISTRY:-}" ]]; then
+    echo "❌ EOM_REGISTRY is required"
     ((errors++))
   fi
   # Required: AMT password
-  if [[ -z "${EMF_AMT_PASSWORD:-}" ]]; then
-    echo "❌ EMF_AMT_PASSWORD is required. Set it in post-orch.env or export it before running this script."
+  if [[ -z "${EOM_AMT_PASSWORD:-}" ]]; then
+    echo "❌ EOM_AMT_PASSWORD is required. Set it in post-orch.env or export it before running this script."
     ((errors++))
   fi
   # Validate IPs
-  # Single-IP mode: EMF_ORCH_IP overrides both Traefik and HAProxy IPs
-  if [[ -n "${EMF_ORCH_IP:-}" ]]; then
-    if ! is_valid_ip "$EMF_ORCH_IP"; then
-      echo "❌ Invalid EMF_ORCH_IP: $EMF_ORCH_IP"
+  # Single-IP mode: EOM_ORCH_IP overrides both Traefik and HAProxy IPs
+  if [[ -n "${EOM_ORCH_IP:-}" ]]; then
+    if ! is_valid_ip "$EOM_ORCH_IP"; then
+      echo "❌ Invalid EOM_ORCH_IP: $EOM_ORCH_IP"
       ((errors++))
     else
-      export EMF_TRAEFIK_IP="$EMF_ORCH_IP"
-      export EMF_HAPROXY_IP="$EMF_ORCH_IP"
-      echo "ℹ️  Single-IP mode: EMF_TRAEFIK_IP and EMF_HAPROXY_IP set to $EMF_ORCH_IP"
+      export EOM_TRAEFIK_IP="$EOM_ORCH_IP"
+      export EOM_HAPROXY_IP="$EOM_ORCH_IP"
+      echo "ℹ️  Single-IP mode: EOM_TRAEFIK_IP and EOM_HAPROXY_IP set to $EOM_ORCH_IP"
     fi
   else
-    echo "ℹ️  Multi-IP mode: Traefik=${EMF_TRAEFIK_IP:-<not set>}, HAProxy=${EMF_HAPROXY_IP:-<not set>}"
+    echo "ℹ️  Multi-IP mode: Traefik=${EOM_TRAEFIK_IP:-<not set>}, HAProxy=${EOM_HAPROXY_IP:-<not set>}"
   fi
-  if [[ -n "${EMF_TRAEFIK_IP:-}" ]]; then
-    if ! is_valid_ip "$EMF_TRAEFIK_IP"; then
-      echo "❌ Invalid Traefik IP: $EMF_TRAEFIK_IP"
+  if [[ -n "${EOM_TRAEFIK_IP:-}" ]]; then
+    if ! is_valid_ip "$EOM_TRAEFIK_IP"; then
+      echo "❌ Invalid Traefik IP: $EOM_TRAEFIK_IP"
       ((errors++))
     fi
   fi
-  if [[ -n "${EMF_HAPROXY_IP:-}" ]]; then
-    if ! is_valid_ip "$EMF_HAPROXY_IP"; then
-      echo "❌ Invalid HAProxy IP: $EMF_HAPROXY_IP"
+  if [[ -n "${EOM_HAPROXY_IP:-}" ]]; then
+    if ! is_valid_ip "$EOM_HAPROXY_IP"; then
+      echo "❌ Invalid HAProxy IP: $EOM_HAPROXY_IP"
       ((errors++))
     fi
   fi
   # Proxy: warn if http set but no_proxy missing
-  if [[ -n "${EMF_HTTP_PROXY:-}" && -z "${EMF_NO_PROXY:-}" ]]; then
-    echo "⚠️  EMF_HTTP_PROXY is set but EMF_NO_PROXY is empty — cluster services may be proxied"
+  if [[ -n "${EOM_HTTP_PROXY:-}" && -z "${EOM_NO_PROXY:-}" ]]; then
+    echo "⚠️  EOM_HTTP_PROXY is set but EOM_NO_PROXY is empty — cluster services may be proxied"
   fi
   if ((errors > 0)); then
     echo "❌ Validation failed with $errors error(s). Aborting."
@@ -570,7 +570,7 @@ else
   echo "❌ Missing post-orch.env"
   exit 1
 fi
-# Support inline KEY=VALUE arguments (e.g., ./post-orch-deploy.sh EMF_HELMFILE_ENV=onprem-eim values)
+# Support inline KEY=VALUE arguments (e.g., ./post-orch-deploy.sh EOM_HELMFILE_ENV=onprem-eim values)
 args=()
 for arg in "$@"; do
   if [[ "$arg" =~ ^[A-Z_]+=.+$ ]]; then
@@ -580,7 +580,7 @@ for arg in "$@"; do
   fi
 done
 set -- "${args[@]}"
-HELMFILE_ENV="${EMF_HELMFILE_ENV:-onprem-eim}"
+HELMFILE_ENV="${EOM_HELMFILE_ENV:-onprem-eim}"
 # ─── Logging: tee all output to timestamped log file ────────────────────────
 LOG_DIR="$SCRIPT_DIR/logs"
 mkdir -p "$LOG_DIR"
@@ -609,7 +609,7 @@ Actions:
   values <chart>       Dump computed values for a single release
   list                 List all available charts and their status
 Environment:
-  EMF_HELMFILE_ENV     Helmfile environment (default: onprem-eim)
+  EOM_HELMFILE_ENV     Helmfile environment (default: onprem-eim)
                        Valid profiles: onprem-eim, onprem-vpro
 Examples:
   $0 install                             # Install all charts (eim/vpro)

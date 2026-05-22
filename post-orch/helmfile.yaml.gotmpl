@@ -53,13 +53,13 @@ repositories:
     url: https://charts.external-secrets.io
   - name: haproxy
     url: https://haproxytech.github.io/helm-charts
-{{- if eq (env "EMF_ENABLE_ISTIO" | default "false") "true" }}
+{{- if eq (env "EOM_ENABLE_ISTIO" | default "false") "true" }}
   - name: istio
     url: https://istio-release.storage.googleapis.com/charts
   - name: kiali
     url: https://kiali.org/helm-charts
 {{- end }}
-{{- if eq (env "EMF_ENABLE_KYVERNO" | default "false") "true" }}
+{{- if eq (env "EOM_ENABLE_KYVERNO" | default "false") "true" }}
   - name: kyverno
     url: https://kyverno.github.io/kyverno
 {{- end }}
@@ -70,10 +70,10 @@ repositories:
     url: ghcr.io/cloudnative-pg/charts
   - name: edge-orch
     oci: true
-    url: {{ env "EMF_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
+    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
   - name: edge-orch-rs
     oci: true
-    url: {{ env "EMF_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
+    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
 
 releases:
   #############################################################################
@@ -709,7 +709,7 @@ releases:
   # Wave 1300 — TLS boots wait + token-fs
   #
   # Default org/project bootstrap is performed by the tenancy-manager itself
-  # (controlled by EMF_DEFAULT_TENANCY → tenancy-manager.bootstrap.enabled)
+  # (controlled by EOM_DEFAULT_TENANCY → tenancy-manager.bootstrap.enabled)
   #############################################################################
 
   - name: secret-wait-tls-boots
@@ -880,7 +880,7 @@ releases:
     namespace: orch-infra
     chart: edge-orch/infra/charts/infra-external
     wait: true
-    version: 2.14.6
+    version: 2.14.7
     values:
       - values/infra-external.yaml.gotmpl
     condition: infra-external.enabled
@@ -948,7 +948,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-infra
     wait: true
-    version: 4.0.8
+    version: 4.0.9
     values:
       - values/web-ui-infra.yaml.gotmpl
     condition: web-ui-infra.enabled
@@ -969,7 +969,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-root
     wait: true
-    version: 4.0.13
+    version: 4.0.14
     values:
       - values/web-ui-root.yaml.gotmpl
     condition: web-ui-root.enabled

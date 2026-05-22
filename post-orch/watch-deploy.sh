@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 Intel Corporation
 #
 # SPDX-License-Identifier: Apache-2.0
-# EMF Deployment Status — shows release pass/fail status.
+# EOM Deployment Status — shows release pass/fail status.
 # Usage:
 #   ./watch-deploy.sh              # Info mode: release status only
 #   ./watch-deploy.sh --debug      # Debug mode: includes pods/jobs per release
@@ -16,7 +16,7 @@ if [[ -f "$HELMFILE_DIR/post-orch.env" ]]; then
   source "$HELMFILE_DIR/post-orch.env"
   set +a
 fi
-HELMFILE_ENV="${EMF_HELMFILE_ENV:-onprem-eim}"
+HELMFILE_ENV="${EOM_HELMFILE_ENV:-onprem-eim}"
 # Get enabled releases
 releases=$(cd "$HELMFILE_DIR" && helmfile -e "$HELMFILE_ENV" list 2>/dev/null \
   | awk 'NR>1 && $3=="true" {print $1}' | sort)
@@ -94,7 +94,7 @@ done_count=$((deployed + failed))
 pct=0
 ((total > 0)) && pct=$((done_count * 100 / total))
 echo ""
-echo "  EMF Deployment Status  ($HELMFILE_ENV)  [$MODE]"
+echo "  EOM Deployment Status  ($HELMFILE_ENV)  [$MODE]"
 echo "  ════════════════════════════════════════════════"
 printf "  Progress: %d/%d (%d%%)   ✅ %d  ❌ %d  ⏳ %d\n" \
   "$done_count" "$total" "$pct" "$deployed" "$failed" $((pending + queued))

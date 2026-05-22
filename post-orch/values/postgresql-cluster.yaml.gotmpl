@@ -11,9 +11,9 @@ version:
   postgresql: "17"
 
 cluster:
-  instances: {{ env "EMF_PG_INSTANCES" | default "1" }}
+  instances: {{ env "EOM_PG_INSTANCES" | default "1" }}
   storage:
-    size: {{ env "EMF_PG_STORAGE_SIZE" | default "8Gi" | quote }}
+    size: {{ env "EOM_PG_STORAGE_SIZE" | default "8Gi" | quote }}
   postgresql:
     parameters:
       huge_pages: "off"
