@@ -153,8 +153,8 @@ ui:
 # Optional Releases to ENABLE (disabled in defaults, enable if required)
 # ═══════════════════════════════════════════════════════════════════════════════
 observability-crds:
-  enabled: false
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
 edgenode-observability:
-  enabled: false
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
 edgenode-dashboards:
-  enabled: false
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
