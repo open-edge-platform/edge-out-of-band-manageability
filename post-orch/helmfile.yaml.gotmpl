@@ -1012,7 +1012,7 @@ releases:
     namespace: orch-infra
     chart: edge-orch/infra/charts/infra-external
     wait: true
-    version: 2.14.6
+    version: 2.14.7
     values:
       - values/infra-external.yaml.gotmpl
     condition: infra-external.enabled
@@ -1080,7 +1080,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-infra
     wait: true
-    version: 4.0.8
+    version: 4.0.9
     values:
       - values/web-ui-infra.yaml.gotmpl
     condition: web-ui-infra.enabled
@@ -1101,7 +1101,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-root
     wait: true
-    version: 4.0.13
+    version: 4.0.14
     values:
       - values/web-ui-root.yaml.gotmpl
     condition: web-ui-root.enabled
