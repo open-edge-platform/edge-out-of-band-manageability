@@ -561,11 +561,39 @@ helmfile_upgrade_all() {
 ################################
 # MAIN
 ################################
-if [[ -f "$MAIN_ENV_CONFIG" ]]; then
+source_env_preserve_existing() {
+  local env_file="$1"
+  local line key
+  local -a keys_to_preserve=()
+  local -A preserved_values=()
+
+  # Collect vars defined in env_file that already exist in current shell env.
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ "$line" =~ ^[[:space:]]*$ ]] && continue
+
+    if [[ "$line" =~ ^[[:space:]]*(export[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*)= ]]; then
+      key="${BASH_REMATCH[2]}"
+      if [[ -v "$key" ]]; then
+        keys_to_preserve+=("$key")
+        preserved_values["$key"]="${!key}"
+      fi
+    fi
+  done < "$env_file"
+
   set -a
   # shellcheck source=/dev/null
-  source "$MAIN_ENV_CONFIG"
+  source "$env_file"
   set +a
+
+  for key in "${keys_to_preserve[@]}"; do
+    printf -v "$key" '%s' "${preserved_values[$key]}"
+    export "$key"
+  done
+}
+
+if [[ -f "$MAIN_ENV_CONFIG" ]]; then
+  source_env_preserve_existing "$MAIN_ENV_CONFIG"
 else
   echo "❌ Missing post-orch.env"
   exit 1
