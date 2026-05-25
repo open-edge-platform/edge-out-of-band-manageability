@@ -145,12 +145,11 @@ infra-onboarding:
 # By default the values template auto-injects https://<clusterDomain> and
 # https://web-ui.<clusterDomain> into the Traefik cors allow-list.
 #
-# Extra origins (e.g. http://localhost:8080 for an engineer running the UI on
-# their laptop) are OPT-IN and intended for development only. They are honored
+# Extra origins (e.g. http://localhost:8080 for running the UI on their local
+# machine) are OPT-IN and intended for development only. They are honored
 # only when BOTH of these are set:
 #   EOM_CORS_ALLOW_EXTRA_ORIGINS=true      (explicit dev opt-in; default false)
 #   EOM_CORS_EXTRA_ORIGINS="origin1,origin2"  (comma-separated list)
-# Production deployments should leave EOM_CORS_ALLOW_EXTRA_ORIGINS unset.
 cors:
   enabled: {{ env "EOM_CORS_ENABLED" | default "true" }}
   {{- if eq (env "EOM_CORS_ALLOW_EXTRA_ORIGINS" | default "false") "true" }}
