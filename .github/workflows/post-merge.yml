@@ -10,6 +10,8 @@ on:
     branches:
       - main
       - release-*
+    tags:
+      - '*'
   workflow_dispatch:
 
 permissions:
@@ -35,4 +37,3 @@ jobs:
       NO_AUTH_ECR_PUSH_USERNAME: ${{ secrets.NO_AUTH_ECR_PUSH_USERNAME }}
       NO_AUTH_ECR_PUSH_PASSWD: ${{ secrets.NO_AUTH_ECR_PUSH_PASSWD }}
       MSTEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
-      
