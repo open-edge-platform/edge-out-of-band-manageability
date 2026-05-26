@@ -53,7 +53,7 @@ infraConfig:
     orchRelease: release.{{ $domain }}
     orchPlatformObsLogs: logs-node.{{ $domain }}:443
     orchPlatformObsMetrics: metrics-node.{{ $domain }}:443
-    orchKeycloak: keycloak.{{ $domain }}:443
+    orchKeycloak: keycloak.{{ $domain }}:443/auth
     orchTelemetry: telemetry-node.{{ $domain }}:443
     orchAttestationStatus: attest-node.{{ $domain }}:443
     orchRegistry: {{ .Values.releaseService.ociRegistry }}:9443
