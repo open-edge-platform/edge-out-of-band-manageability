@@ -53,13 +53,13 @@ repositories:
     url: https://charts.external-secrets.io
   - name: haproxy
     url: https://haproxytech.github.io/helm-charts
-{{- if eq (env "EMF_ENABLE_ISTIO" | default "false") "true" }}
+{{- if eq (env "EOM_ENABLE_ISTIO" | default "false") "true" }}
   - name: istio
     url: https://istio-release.storage.googleapis.com/charts
   - name: kiali
     url: https://kiali.org/helm-charts
 {{- end }}
-{{- if eq (env "EMF_ENABLE_KYVERNO" | default "false") "true" }}
+{{- if eq (env "EOM_ENABLE_KYVERNO" | default "false") "true" }}
   - name: kyverno
     url: https://kyverno.github.io/kyverno
 {{- end }}
@@ -70,10 +70,10 @@ repositories:
     url: ghcr.io/cloudnative-pg/charts
   - name: edge-orch
     oci: true
-    url: {{ env "EMF_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
+    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
   - name: edge-orch-rs
     oci: true
-    url: {{ env "EMF_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
+    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
 
 releases:
   #############################################################################
@@ -100,7 +100,7 @@ releases:
     namespace: postgresql-operator
     chart: cnpg/cloudnative-pg
     wait: true
-    version: 0.27.1
+    version: 0.28.2
     values:
       - values/postgresql-operator.yaml
     condition: postgresql-operator.enabled
@@ -137,7 +137,7 @@ releases:
     namespace: cert-manager
     chart: jetstack/cert-manager
     wait: true
-    version: 1.19.3
+    version: 1.20.2
     timeout: 300
     values:
       - values/cert-manager.yaml.gotmpl
@@ -154,7 +154,7 @@ releases:
     namespace: orch-secret
     chart: external-secrets/external-secrets
     wait: true
-    version: 2.0.1
+    version: 2.5.0
     values:
       - values/external-secrets.yaml
     condition: external-secrets.enabled
@@ -169,7 +169,7 @@ releases:
     namespace: istio-system
     chart: istio/base
     wait: true
-    version: 1.29.1
+    version: 1.29.2
     values:
       - values/istio-base.yaml
     condition: istio-base.enabled
@@ -203,7 +203,7 @@ releases:
     namespace: kyverno
     chart: kyverno/kyverno
     wait: true
-    version: 3.7.1
+    version: 3.8.0
     values:
       - values/kyverno.yaml
     condition: kyverno.enabled
@@ -241,7 +241,7 @@ releases:
     namespace: istio-system
     chart: istio/istiod
     wait: true
-    version: 1.29.1
+    version: 1.29.2
     values:
       - values/istiod.yaml.gotmpl
     needs:
@@ -256,7 +256,7 @@ releases:
     namespace: orch-platform
     chart: stakater/reloader
     wait: true
-    version: 2.2.3
+    version: 2.2.11
     values:
       - values/reloader.yaml
     condition: reloader.enabled
@@ -318,7 +318,7 @@ releases:
     namespace: orch-database
     chart: cnpg/cluster
     wait: true
-    version: 0.6.0
+    version: 0.6.1
     values:
       - values/postgresql-cluster.yaml.gotmpl
     condition: postgresql-cluster.enabled
@@ -356,7 +356,7 @@ releases:
     namespace: istio-system
     chart: kiali/kiali-server
     wait: true
-    version: 2.22.0
+    version: 2.25.0
     values:
       - values/kiali.yaml
     condition: kiali.enabled
@@ -440,7 +440,7 @@ releases:
     namespace: orch-platform
     chart: edge-orch/common/charts/secrets-config
     wait: true
-    version: 26.0.2
+    version: 26.0.3
     values:
       - values/secrets-config.yaml.gotmpl
     condition: secrets-config.enabled
@@ -479,7 +479,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch-rs/common/charts/secret-wait
     wait: true
-    version: 26.0.2
+    version: 26.0.3
     values:
       - values/secret-wait-tls-orch.yaml
     condition: secret-wait-tls-orch.enabled
@@ -572,7 +572,7 @@ releases:
     namespace: orch-boots
     chart: haproxy/kubernetes-ingress
     wait: true
-    version: 1.41.0
+    version: 1.52.0
     values:
       - values/ingress-haproxy.yaml.gotmpl
     condition: ingress-haproxy.enabled
@@ -617,7 +617,7 @@ releases:
     namespace: orch-gateway
     chart: traefik/traefik
     wait: true
-    version: 39.0.6
+    version: 40.2.0
     values:
       - values/traefik.yaml.gotmpl
     condition: traefik.enabled
@@ -675,7 +675,7 @@ releases:
     namespace: orch-iam
     chart: edge-orch/common/charts/tenancy-manager
     wait: true
-    version: 26.1.3
+    version: 26.1.6
     values:
       - values/tenancy-manager.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -696,7 +696,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch/common/charts/keycloak-tenant-controller
     wait: true
-    version: 26.1.14
+    version: 26.1.19
     values:
       - values/keycloak-tenant-controller.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -709,7 +709,7 @@ releases:
   # Wave 1300 — TLS boots wait + token-fs
   #
   # Default org/project bootstrap is performed by the tenancy-manager itself
-  # (controlled by EMF_DEFAULT_TENANCY → tenancy-manager.bootstrap.enabled)
+  # (controlled by EOM_DEFAULT_TENANCY → tenancy-manager.bootstrap.enabled)
   #############################################################################
 
   - name: secret-wait-tls-boots
@@ -790,7 +790,7 @@ releases:
     namespace: orch-platform
     chart: edge-orch/common/charts/component-status
     wait: true
-    version: 26.1.3
+    version: 26.1.4
     values:
       - values/component-status.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -843,7 +843,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch/common/charts/auth-service
     wait: true
-    version: 26.1.12
+    version: 26.1.15
     values:
       - values/auth-service.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -880,7 +880,7 @@ releases:
     namespace: orch-infra
     chart: edge-orch/infra/charts/infra-external
     wait: true
-    version: 2.14.5
+    version: 2.14.7
     values:
       - values/infra-external.yaml.gotmpl
     condition: infra-external.enabled
@@ -915,7 +915,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch/common/charts/certificate-file-server
     wait: true
-    version: 26.0.2
+    version: 26.0.4
     values:
       - values/certificate-file-server.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -948,7 +948,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-infra
     wait: true
-    version: 4.0.7
+    version: 4.0.9
     values:
       - values/web-ui-infra.yaml.gotmpl
     condition: web-ui-infra.enabled
@@ -969,7 +969,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-root
     wait: true
-    version: 4.0.12
+    version: 4.0.14
     values:
       - values/web-ui-root.yaml.gotmpl
     condition: web-ui-root.enabled

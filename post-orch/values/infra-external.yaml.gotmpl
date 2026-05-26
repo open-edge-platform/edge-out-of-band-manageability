@@ -99,6 +99,9 @@ loca-credentials:
 
 amt:
   mps:
+    refresher:
+     intervalSeconds: 3000
+     livenessMaxAgeSeconds: 3300
     postgresql:
       image:
         tag: 16.10-bookworm
@@ -154,7 +157,7 @@ amt:
     params:
       # User-provided password
       # Should have One uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.
-      password: ""
+      password: {{ env "EOM_AMT_PASSWORD" | default "" | quote }}
     env:
       oidc:
         oidc_server_url: "http://platform-keycloak.orch-platform.svc/auth/realms/master"
