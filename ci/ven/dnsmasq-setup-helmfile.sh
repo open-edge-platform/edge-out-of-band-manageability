@@ -105,6 +105,7 @@ address=/log-query.$CLUSTER_FQDN/$ip_address
 address=/logs-node.$CLUSTER_FQDN/$ip_address
 address=/metadata.$CLUSTER_FQDN/$ip_address
 address=/metrics-node.$CLUSTER_FQDN/$ip_address
+address=/metrics-node-cli.$CLUSTER_FQDN/$ip_address
 address=/observability-admin.$CLUSTER_FQDN/$ip_address
 address=/observability-ui.$CLUSTER_FQDN/$ip_address
 address=/onboarding-node.$CLUSTER_FQDN/$ip_address
