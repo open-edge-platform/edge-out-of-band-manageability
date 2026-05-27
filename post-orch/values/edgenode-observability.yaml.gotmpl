@@ -4,6 +4,8 @@
 
 ---
 grafana:
+  image:
+    tag: 12.3.6-security-04
   {{- if .Values.imagePullSecrets }}
   imagePullSecrets:
     {{- toYaml . | nindent 4 }}
