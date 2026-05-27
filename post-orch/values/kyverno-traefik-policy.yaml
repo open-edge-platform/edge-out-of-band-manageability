@@ -21,6 +21,7 @@ jwtMiddlewareException:
       - "cluster-connect-gateway-kubeapi"
       - "orch-platform-keycloak"
       - "amt-api-rps"  # Added to allow OpenDMT RPC-RPS traffic, which fails due to missing JWT token.
+      - "tinkerbell-haproxy-via-traefik"  # PXE boot infra route; no JWT needed.
   - namespace: "orch-boots"
     names:
       - "tinkerbell-haproxy-ingress"
