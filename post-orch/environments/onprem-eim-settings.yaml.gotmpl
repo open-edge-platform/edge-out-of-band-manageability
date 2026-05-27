@@ -151,10 +151,9 @@ pxe:
 {{- end }}
 
 # ─── O11y replica settings ──────────────────────────────────────────────────
-o11y:
-  alertingMonitor:
-    minReplicas: {{ env "EOM_ALERTING_MIN_REPLICAS" | default "1" }}
-    maxReplicas: {{ env "EOM_ALERTING_MAX_REPLICAS" | default "1" }}
-    alertmanagerReplicas: {{ env "EOM_ALERTMANAGER_REPLICAS" | default "1" }}
-    smtpInitialize: {{ env "EOM_SMTP_INITIALIZE" | default "false" }}
-
+alerting-monitor:
+  minReplicas: {{ env "EOM_ALERTING_MIN_REPLICAS" | default "2" }}
+  maxReplicas: {{ env "EOM_ALERTING_MAX_REPLICAS" | default "5" }}
+  replicas: {{ env "EOM_ALERTMANAGER_REPLICAS" | default "1" }}
+  smtp:
+    initialize: {{ env "EOM_SMTP_INITIALIZE" | default "false" }}

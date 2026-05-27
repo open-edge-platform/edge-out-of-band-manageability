@@ -130,3 +130,17 @@ infra-external:
     enabled: false
   loca-templates-manager:
     enabled: false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Optional Releases to ENABLE (disabled in defaults, enable if required)
+# ═══════════════════════════════════════════════════════════════════════════════
+observability-crds:
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
+edgenode-observability:
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
+edgenode-dashboards:
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
+alerting-monitor:
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
+observability-tenant-controller:
+  enabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
