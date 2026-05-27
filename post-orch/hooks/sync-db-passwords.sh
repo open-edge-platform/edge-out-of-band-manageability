@@ -72,10 +72,11 @@ echo "🔄 Password sync complete: $SYNCED synced, $FAILED failed"
 # Update derived connection-string secrets (mps, rps) that are built from the
 # *-local-postgresql secrets by the amt-dbpassword-secret-job. On rerun, the Job
 # may not have re-run yet, leaving these secrets with stale passwords.
+# On first install, pre-create these secrets so MPS/RPS pods don't fail with
+# "secret not found" before the amt-dbpassword-secret-job runs.
 for app in mps rps; do
   SRC_SECRET="${app}-local-postgresql"
-  if kubectl get secret "$SRC_SECRET" -n orch-infra &>/dev/null \
-    && kubectl get secret "$app" -n orch-infra &>/dev/null; then
+  if kubectl get secret "$SRC_SECRET" -n orch-infra &>/dev/null; then
     PW=$(kubectl get secret "$SRC_SECRET" -n orch-infra -o jsonpath='{.data.PGPASSWORD}' | base64 -d)
     USER=$(kubectl get secret "$SRC_SECRET" -n orch-infra -o jsonpath='{.data.PGUSER}' | base64 -d)
     DB=$(kubectl get secret "$SRC_SECRET" -n orch-infra -o jsonpath='{.data.PGDATABASE}' | base64 -d)
