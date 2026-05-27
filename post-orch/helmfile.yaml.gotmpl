@@ -1012,6 +1012,7 @@ releases:
     namespace: orch-infra
     chart: edge-orch/infra/charts/infra-external
     wait: true
+    timeout: 600
     version: 2.14.8
     values:
       - values/infra-external.yaml.gotmpl
