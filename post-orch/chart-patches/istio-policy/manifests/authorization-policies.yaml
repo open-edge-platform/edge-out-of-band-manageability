@@ -1,0 +1,167 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-orch-infra
+  namespace: orch-infra
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["orch-gateway"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-platform"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-infra"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-database"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - to:
+    - operation:
+        ports:
+        - "7946"
+        - "6831"
+        - "14268"
+        - "8888"
+        - "9411"
+        - "3100"
+        - "9095"
+        - "9094"
+        - "4433"
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-orch-platform
+  namespace: orch-platform
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["orch-gateway"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-infra"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-platform"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-ui"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - to:
+    - operation:
+        ports:
+        - "7946"
+        - "6831"
+        - "14268"
+        - "8888"
+        - "9411"
+        - "8200"
+        - "8201"
+        - "3100"
+        - "9095"
+        - "8443"
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-orch-gateway
+  namespace: orch-gateway
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["orch-gateway", "istio-system"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - to:
+    - operation:
+        ports:
+        - "443"
+        - "4433"
+        - "9100"
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-orch-ui
+  namespace: orch-ui
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["orch-gateway", "orch-ui"]
+    to:
+    - operation:
+        hosts: ["*"]
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-orch-database
+  namespace: orch-database
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["orch-infra"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-platform"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-iam"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - from:
+    - source:
+        namespaces: ["orch-database"]
+    to:
+    - operation:
+        hosts: ["*"]
+  - to:
+    - operation:
+        ports:
+        - "5432"

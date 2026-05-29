@@ -1,0 +1,300 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# NetworkPolicies for east-west pod-to-pod communication restriction.
+# This is a NEW chart/resource — not part of any existing chart.
+# Deploy to each orch namespace to enforce network segmentation at the CNI level.
+
+{{- if .Values.networkPolicy.enabled }}
+---
+# Default deny all ingress in orch-infra
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: orch-infra
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Allow orch-infra pods to receive traffic from specific namespaces
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-orch-namespaces
+  namespace: orch-infra
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  # From orch-gateway (traefik ingress)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-gateway
+  # From orch-platform (keycloak/vault callbacks)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-platform
+  # Intra-namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-infra
+  # From istio-system (sidecar/istiod)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+  # From kube-system (health checks)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+---
+# Default deny all ingress in orch-platform
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: orch-platform
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Allow orch-platform pods to receive traffic from specific namespaces
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-orch-namespaces
+  namespace: orch-platform
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  # From orch-gateway (ingress to keycloak/vault)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-gateway
+  # From orch-infra (services needing keycloak/vault)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-infra
+  # Intra-namespace (vault raft, keycloak clustering)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-platform
+  # From orch-ui (UI needs keycloak auth)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-ui
+  # From istio-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+  # From kube-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+---
+# Default deny all ingress in orch-gateway
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: orch-gateway
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Allow orch-gateway to receive external traffic and from istio
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-gateway
+  namespace: orch-gateway
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  # External traffic (LoadBalancer → Traefik)
+  - ports:
+    - port: 443
+      protocol: TCP
+    - port: 4433
+      protocol: TCP
+  # From istio-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+  # Intra-namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-gateway
+  # From kube-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+---
+# Default deny all ingress in orch-database
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: orch-database
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Allow orch-database to receive traffic only from services that need DB access
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-orch-namespaces
+  namespace: orch-database
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  # From orch-infra (application services)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-infra
+    ports:
+    - port: 5432
+      protocol: TCP
+  # From orch-platform (keycloak)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-platform
+    ports:
+    - port: 5432
+      protocol: TCP
+  # Intra-namespace (postgresql replication)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-database
+  # From postgresql-operator namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: postgresql-operator
+  # From istio-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+  # From kube-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+---
+# Default deny all ingress in orch-ui
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: orch-ui
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Allow orch-ui to receive traffic from gateway only
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-gateway
+  namespace: orch-ui
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  # From orch-gateway (traefik)
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-gateway
+  # Intra-namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-ui
+  # From istio-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+  # From kube-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+---
+# Default deny all ingress in orch-iam
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: orch-iam
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Allow orch-iam to receive traffic from relevant namespaces
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-orch-namespaces
+  namespace: orch-iam
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-gateway
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-platform
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: orch-iam
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+{{- end }}

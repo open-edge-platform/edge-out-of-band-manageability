@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Suggested Chart Changes for istio-policy
+# =========================================
+#
+# This folder contains proposed patches to the `edge-orch/common/charts/istio-policy`
+# chart (currently v26.0.2) to address security gaps in east-west traffic control.
+#
+# Changes Summary:
+#
+# 1. templates/istio-policy.yaml
+#    - PeerAuthentication mode is now configurable via values (`.Values.peerAuthentication.mode`)
+#    - Default changed from PERMISSIVE → STRICT
+#    - This enforces mTLS for ALL pod-to-pod communication within the mesh
+#
+# 2. templates/traffic-policy.yaml
+#    - AuthorizationPolicies now include `from.source.namespaces` restrictions
+#    - Only specific namespaces can reach each other (principle of least privilege)
+#    - Example: orch-database only accepts traffic from orch-infra and orch-platform on port 5432
+#
+# 3. templates/network-policies.yaml (NEW)
+#    - Kubernetes NetworkPolicies as defense-in-depth (CNI-level enforcement)
+#    - Default-deny ingress per namespace + explicit allow rules
+#    - Works even if Istio sidecars are absent (belt-and-suspenders approach)
+#    - Controlled by `.Values.networkPolicy.enabled`
+#
+# 4. values-override.yaml
+#    - Shows the values file changes needed for post-orch/values/istio-policy.yaml
+#    - Adds `peerAuthentication.mode: STRICT`
+#
+# How to Apply:
+#   Option A: Merge these templates into the upstream chart source
+#   Option B: Apply as a separate Helmfile release alongside istio-policy
+#
+# Impact Assessment:
+#   - PeerAuthentication STRICT: Pods without sidecars will be REJECTED (not just downgraded)
+#     → Must ensure all pods have sidecars first (rolling restart)
+#   - AuthorizationPolicy tightening: Services calling across unexpected namespaces will fail
+#     → Test thoroughly in staging
+#   - NetworkPolicies: Additive security; won't break if Istio is functioning correctly
+#     → Safe to deploy first as validation layer
+#
+# Recommended Rollout Order:
+#   1. Rolling restart all deployments (get sidecars injected)
+#   2. Deploy NetworkPolicies (additive, non-breaking if traffic is already correct)
+#   3. Deploy tightened AuthorizationPolicies (may break unexpected cross-namespace calls)
+#   4. Switch PeerAuthentication to STRICT (breaks any non-mTLS communication)

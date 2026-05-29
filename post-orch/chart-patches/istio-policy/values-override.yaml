@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Updated values for istio-policy chart to enable STRICT mTLS
+# Add to post-orch/values/istio-policy.yaml
+
+# Disable serviceMonitor if Prometheus Operator CRDs are not installed
+serviceMonitor:
+  enabled: false
+
+# Enable STRICT mTLS mesh-wide (changed from PERMISSIVE)
+peerAuthentication:
+  enabled: true
+  mode: STRICT
+
+# Disable namespaces not used in EIM/vPro profiles
+authorizationPolicy:
+  orch-app:
+    enabled: false
+  orch-cluster:
+    enabled: false
+  orch-sre:
+    enabled: false
+  orch-harbor:
+    enabled: false
