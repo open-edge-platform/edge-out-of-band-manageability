@@ -12,6 +12,7 @@ jwtMiddlewareException:
       - "app-service-proxy-src"
       - "vnc-proxy-app-resource-manager-websocket-server"
       - "traefik-boots-ca-certificate"
+      - "traefik-installer-script"
       - "common-log-query-rest-proxy"
       - "web-ui-root"
       - "web-ui-infra"
@@ -21,6 +22,7 @@ jwtMiddlewareException:
       - "cluster-connect-gateway-kubeapi"
       - "orch-platform-keycloak"
       - "amt-api-rps"  # Added to allow OpenDMT RPC-RPS traffic, which fails due to missing JWT token.
+      - "tinkerbell-haproxy-via-traefik"
   - namespace: "orch-boots"
     names:
       - "tinkerbell-haproxy-ingress"
@@ -31,6 +33,7 @@ anyMiddlewareException:
       - "orch-platform-vault"
       - "edgenode-observability-grafana"
       - "traefik-boots-ca-certificate"
+      - "traefik-installer-script"
       - "harbor-oci"
       - "svc-fleet-https"
       - "onboardingmgr-api-grpc-stream"
