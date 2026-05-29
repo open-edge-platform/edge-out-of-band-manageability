@@ -107,6 +107,14 @@ runs:
         echo "Verifying post-orch deployment..."
         chmod +x watch-deploy.sh
         ./watch-deploy.sh
+    # ── Security Hardening Patches ───────────────────────────────────────────
+    - name: Apply security hardening patches
+      shell: bash
+      working-directory: post-orch
+      run: |
+        echo "▶ Applying security hardening patches (STRICT mTLS, AuthZ, NetworkPolicies)"
+        chmod +x apply-security-patches.sh
+        ./apply-security-patches.sh
     # ── Install Orch CA Certificate ──────────────────────────────────────────
     - name: Install orchestrator CA certificate
       shell: bash
