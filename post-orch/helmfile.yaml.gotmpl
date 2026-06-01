@@ -73,9 +73,6 @@ repositories:
   - name: edge-orch
     oci: true
     url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
-  - name: edge-orch-rs
-    oci: true
-    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
 
 releases:
   #############################################################################
@@ -492,7 +489,7 @@ releases:
       app: secret-wait-tls-orch
       wave: "170"
     namespace: orch-gateway
-    chart: edge-orch-rs/common/charts/secret-wait
+    chart: edge-orch/common/charts/secret-wait
     wait: true
     version: 26.0.3
     values:
@@ -812,7 +809,7 @@ releases:
       app: secret-wait-tls-boots
       wave: "1300"
     namespace: orch-boots
-    chart: edge-orch-rs/common/charts/secret-wait
+    chart: edge-orch/common/charts/secret-wait
     wait: true
     version: 26.0.2
     values:
