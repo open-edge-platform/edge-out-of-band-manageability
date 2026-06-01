@@ -77,8 +77,7 @@ post-orch/
 │   ├── defaults-disabled.yaml.gotmpl
 │   ├── onprem-eim-settings.yaml.gotmpl
 │   ├── onprem-eim-features.yaml.gotmpl
-│   ├── profile-vpro.yaml.gotmpl
-│   └── profile-coder.yaml.gotmpl
+│   └── profile-vpro.yaml.gotmpl
 │
 ├── values/                    # Helm values
 │   ├── traefik.yaml.gotmpl
@@ -164,7 +163,6 @@ files applied in order (later files override earlier):
 
 ```text
 onprem-eim:  defaults-disabled -> settings -> features
-             -> profile-coder
 onprem-vpro: defaults-disabled -> settings -> features
              -> profile-vpro
 ```
@@ -209,9 +207,9 @@ These **must** be set before deployment:
 Enable or disable optional features in `post-orch.env`:
 
 - `EOM_ENABLE_ISTIO` — Istio service mesh + Kiali
-  (default: `false`)
+  (default: `true`). Set to `false` to disable.
 - `EOM_ENABLE_KYVERNO` — Kyverno policy engine
-  (default: `false`)
+  (default: `true`). Set to `false` to disable.
 
 ### Registry
 

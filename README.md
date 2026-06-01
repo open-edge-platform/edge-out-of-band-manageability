@@ -29,21 +29,17 @@ hosts).
 ```mermaid
 flowchart TD
 
-    %% LEFT: Cloud
-    subgraph Cloud[" "]
-    direction LR
-    APPS@{ shape: cloud, label: "Apps"  } ~~~
+    %% LEFT: Infra
     Infra@{ shape: cloud, label: "Infra"  }
-    end
 
     %% EDGE SITES
     SF["Edge Nodes at Customer Site<br>(San Francisco)"]
     ATL["Edge Nodes at Customer Site<br>(Atlanta)"]
     NYC["Edge Nodes at Customer Site<br>(New York City)"]
 
-    Cloud -.-> SF
-    Cloud -.-> ATL
-    Cloud -.-> NYC
+    Infra -.-> SF
+    Infra -.-> ATL
+    Infra -.-> NYC
 
     %% RIGHT SIDE
     subgraph EO["Edge Orchestrator"]
@@ -89,7 +85,7 @@ end
     end
 
 
-    Cloud -.-> |"Cloud-based<br>Orchestration"|EO
+    Infra -.-> |"Cloud-based<br>Orchestration"|EO
 
 
     %% Styling
@@ -101,13 +97,13 @@ end
     class EO,EdgeNode,AppsRow,Orch,OrchestrationLayer, grey;
     class WebUI,AppOrch,ClusterOrch,InfraMgmt,Platform,INFRA blue;
     class CA1,CA2,CA3,K8s,OS,HW lightblue;
-    class Cloud transparent;
+
 
     %% Define the style for big nodes
     classDef bigNode font-size:30px,stroke-width:2px,padding:10px;
     
     %% Apply the style
-    class APPS,Infra bigNode;
+    class Infra bigNode;
 ```
 
 ### Key Components
