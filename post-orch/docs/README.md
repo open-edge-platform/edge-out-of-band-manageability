@@ -104,7 +104,7 @@ on the EIM base and adds additional components.
 
 **Edge Infrastructure Management** — the base profile.
 
-Deploys: **44 releases**
+Deploys: **40 releases**
 
 Includes:
 
@@ -127,7 +127,7 @@ EOM_HELMFILE_ENV=onprem-eim ./post-orch-deploy.sh install
 **vPro-focused** — lightweight profile for managing
 Intel vPro devices. Skips OS provisioning.
 
-Deploys: **40 releases** (4 fewer than `onprem-eim`)
+Deploys: **27 releases** (13 fewer than `onprem-eim`)
 
 Compared to `onprem-eim`, this profile **removes**:
 

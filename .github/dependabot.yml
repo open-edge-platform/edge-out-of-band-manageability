@@ -10,6 +10,8 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     # Only update patch versions to reduce the chance of regressions getting introduced
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
@@ -37,6 +39,8 @@ updates:
       - "/pod-configs/module/application-load-balancer"
       - "/pod-configs/module/load-balancer"
       - "/pod-configs/buckets"
+    cooldown:
+      default-days: 7
     # Only update patch versions to reduce the chance of regressions getting introduced
     ignore:
       - dependency-name: "*"
@@ -57,6 +61,9 @@ updates:
       - "/argocd-internal/root-app"
       - "/argocd/applications"
       - "/argocd/root-app"
+
+    cooldown:
+      default-days: 7
     # Only update patch versions to reduce the chance of regressions getting introduced
     ignore:
       - dependency-name: "*"
@@ -75,6 +82,8 @@ updates:
   - package-ecosystem: "docker"
     directories:
       - "/installer"
+    cooldown:
+      default-days: 7
     # Only update patch versions to reduce the chance of regressions getting introduced
     ignore:
       - dependency-name: "*"
@@ -92,6 +101,8 @@ updates:
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    cooldown:
+      default-days: 7
     # Only update patch versions to reduce the chance of regressions getting introduced
     ignore:
       - dependency-name: "*"

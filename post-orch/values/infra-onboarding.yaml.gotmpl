@@ -204,7 +204,7 @@ dkam:
 infra-config:
   config:
     # ── Agent versions ───────────────────────────────────────────────────────
-    enAgentManifestTag: "1.6.6"
+    enAgentManifestTag: "1.6.8"
     embImageUrl: files-edge-orch/repository/microvisor/uos/emb_uos_x86_64_20260507.tar.gz
 
     # ── Edge-node proxy settings ─────────────────────────────────────────────
@@ -221,6 +221,7 @@ infra-config:
     orchRelease: release.{{ $domain }}
     orchPlatformObsLogs: logs-node.{{ $domain }}:443
     orchPlatformObsMetrics: metrics-node.{{ $domain }}:443
+    orchPlatformObsMetricsCli: metrics-node-cli.{{ $domain }}:443
     orchKeycloak: keycloak.{{ $domain }}:443
     orchTelemetry: telemetry-node.{{ $domain }}:443
     orchAttestationStatus: attest-node.{{ $domain }}:443
