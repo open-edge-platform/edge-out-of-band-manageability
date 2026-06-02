@@ -139,7 +139,7 @@ infra-onboarding:
   enabled: true
   skipOSProvisioning: {{ env "EOM_SKIP_OS_PROVISIONING" | default "false" }}
   disableCoProfile: true
-  disableO11yProfile: true
+  disableO11yProfile: {{ if eq (env "EOM_ENABLE_O11Y") "true" }}false{{ else }}true{{ end }}
 
 # ─── CORS ────────────────────────────────────────────────────────────────────
 cors:

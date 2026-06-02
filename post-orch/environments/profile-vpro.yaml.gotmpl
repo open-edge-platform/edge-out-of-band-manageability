@@ -95,7 +95,7 @@ infra-onboarding:
   skipOSProvisioning: true
   enServiceClients: "platform-manageability-agent"
   enOutboundClients: " "
-  enMetricsEnabled: "false"
+  enMetricsEnabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
   enTokenClients: "node-agent,platform-manageability-agent"
   tinkerbell:
     enabled: false
