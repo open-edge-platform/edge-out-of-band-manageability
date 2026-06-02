@@ -29,21 +29,17 @@ hosts).
 ```mermaid
 flowchart TD
 
-    %% LEFT: Cloud
-    subgraph Cloud[" "]
-    direction LR
-    APPS@{ shape: cloud, label: "Apps"  } ~~~
+    %% LEFT: Infra
     Infra@{ shape: cloud, label: "Infra"  }
-    end
 
     %% EDGE SITES
     SF["Edge Nodes at Customer Site<br>(San Francisco)"]
     ATL["Edge Nodes at Customer Site<br>(Atlanta)"]
     NYC["Edge Nodes at Customer Site<br>(New York City)"]
 
-    Cloud -.-> SF
-    Cloud -.-> ATL
-    Cloud -.-> NYC
+    Infra -.-> SF
+    Infra -.-> ATL
+    Infra -.-> NYC
 
     %% RIGHT SIDE
     subgraph EO["Edge Orchestrator"]
@@ -89,7 +85,7 @@ end
     end
 
 
-    Cloud -.-> |"Cloud-based<br>Orchestration"|EO
+    Infra -.-> |"Cloud-based<br>Orchestration"|EO
 
 
     %% Styling
@@ -101,13 +97,13 @@ end
     class EO,EdgeNode,AppsRow,Orch,OrchestrationLayer, grey;
     class WebUI,AppOrch,ClusterOrch,InfraMgmt,Platform,INFRA blue;
     class CA1,CA2,CA3,K8s,OS,HW lightblue;
-    class Cloud transparent;
+
 
     %% Define the style for big nodes
     classDef bigNode font-size:30px,stroke-width:2px,padding:10px;
     
     %% Apply the style
-    class APPS,Infra bigNode;
+    class Infra bigNode;
 ```
 
 ### Key Components
@@ -147,7 +143,7 @@ There are multiple ways to begin to learn about, use, or contribute to Edge Orch
   images of the rest of the components, and then submit a PR to the component CI and the
   [EOM CI](https://github.com/open-edge-platform/edge-out-of-band-manageability/actions).
 - [Buildall based Developer workflow](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/developer_guide/platform/buildall.html):
-  if you do not wish to use our CI and pre-built images, the [buildall](https://github.com/open-edge-platform/edge-out-of-band-manageability/tree/main/buildall)
+  if you do not wish to use our CI and pre-built images, the buildall
   script can clone all the repos, build the Helm chart and container images required to deploy the Edge Orchestrator
   from source, push the artifacts to a repository of your choice, and locally test in your developer environment.
 
@@ -205,16 +201,6 @@ Here is brief description of all the repos.
   troubleshooting, and software architecture specifications. You can also visit our
   [documentation](https://docs.openedgeplatform.intel.com/edge-manage-docs/main/index.html).
 
-#### Common Services
-
-- [orch-library](https://github.com/open-edge-platform/orch-library): Offers
-  shared libraries and resources for application and cluster lifecycle
-  management.
-- [cluster-extensions](https://github.com/open-edge-platform/cluster-extensions):
-  Provides extensions for edge clusters managed by Edge Orchestrator. A standard set of extensions are deployed on all
-  edge clusters.
-  An optional set of extensions can be deployed on-demand.
-
 #### Edge Nodes / Hosts
 
 - [edge-node-agents](https://github.com/open-edge-platform/edge-node-agents):
@@ -247,7 +233,3 @@ Discover more about the [Open Edge Platform](https://github.com/open-edge-platfo
 
 Intel Edge Out-of-Band Manageability is licensed
 under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=open-edge-platform/edge-out-of-band-manageability&type=Date)](https://www.star-history.com/#open-edge-platform/edge-out-of-band-manageability&Date)

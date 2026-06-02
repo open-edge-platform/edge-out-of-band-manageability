@@ -25,8 +25,7 @@ for on-premises installations.
   - [Proxy Settings](#proxy-settings)
 - [Deployment](#deployment)
   - [Step 1: Configure Environment](#step-1-configure-environment)
-  - [Step 2: Run Setup](#step-2-run-setup)
-  - [Step 3: Deploy](#step-3-deploy)
+  - [Step 2: Deploy](#step-2-deploy)
   - [Deploying a Single Chart](#deploying-a-single-chart)
   - [Preview Changes](#preview-changes)
   - [Uninstall](#uninstall)
@@ -68,17 +67,14 @@ management, Cluster Orchestration, etc.).
 ```text
 post-orch/
 ├── post-orch-deploy.sh        # Main script
-├── post-orch-setup.sh         # Pre-deployment setup
 ├── post-orch.env              # Environment config
 ├── helmfile.yaml.gotmpl       # Release definitions
-├── functions.sh               # Shared helpers
 │
 ├── environments/              # Profiles
 │   ├── defaults-disabled.yaml.gotmpl
 │   ├── onprem-eim-settings.yaml.gotmpl
 │   ├── onprem-eim-features.yaml.gotmpl
-│   ├── profile-vpro.yaml.gotmpl
-│   └── profile-coder.yaml.gotmpl
+│   └── profile-vpro.yaml.gotmpl
 │
 ├── values/                    # Helm values
 │   ├── traefik.yaml.gotmpl
@@ -90,9 +86,7 @@ post-orch/
 │   ├── create-tls-autocert.sh
 │   └── cleanup-vault-keys.sh
 │
-├── logs/                      # Auto-created
-├── docs/                      # Documentation
-└── .computed-values/          # Auto-generated
+└── docs/                      # Documentation
 ```
 
 ## Deployment Profiles
@@ -164,7 +158,6 @@ files applied in order (later files override earlier):
 
 ```text
 onprem-eim:  defaults-disabled -> settings -> features
-             -> profile-coder
 onprem-vpro: defaults-disabled -> settings -> features
              -> profile-vpro
 ```
@@ -209,9 +202,9 @@ These **must** be set before deployment:
 Enable or disable optional features in `post-orch.env`:
 
 - `EOM_ENABLE_ISTIO` — Istio service mesh + Kiali
-  (default: `false`)
+  (default: `true`). Set to `false` to disable.
 - `EOM_ENABLE_KYVERNO` — Kyverno policy engine
-  (default: `false`)
+  (default: `true`). Set to `false` to disable.
 
 ### Registry
 
@@ -260,32 +253,7 @@ At minimum, update:
   (if behind a proxy, otherwise clear them)
 - `EOM_DOCKER_USERNAME` / `EOM_DOCKER_PASSWORD`
 
-### Step 2: Run Setup
-
-Prepare the cluster for EOM deployment:
-
-```bash
-./post-orch-setup.sh install
-```
-
-This script:
-
-- Creates all required Kubernetes namespaces
-- Generates and stores initial secrets and passwords
-- Configures Gitea for chart/config storage
-  (only when App Orchestration is enabled)
-
-To tear down the setup:
-
-```bash
-./post-orch-setup.sh uninstall
-```
-
-> **Note:** Only run `uninstall` **after** you have
-> uninstalled all Helm releases with
-> `./post-orch-deploy.sh uninstall`.
-
-### Step 3: Deploy
+### Step 2: Deploy
 
 Set `EOM_HELMFILE_ENV` in `post-orch.env` to your
 desired profile, then run:
