@@ -96,7 +96,7 @@ infra-onboarding:
   enServiceClients: "platform-manageability-agent"
   enOutboundClients: " "
   enMetricsEnabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
-  enTokenClients: "node-agent,platform-manageability-agent"
+  enTokenClients: "node-agent,platform-manageability-agent,platform-observability-agent,prometheus"
   tinkerbell:
     enabled: false
   pxe-server:
