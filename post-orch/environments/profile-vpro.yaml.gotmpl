@@ -93,8 +93,8 @@ infra-core:
 infra-onboarding:
   enabled: true
   skipOSProvisioning: true
-  enServiceClients: "platform-manageability-agent,platform-telemetry-agent"
-  enOutboundClients: "platform-observability-collector,platform-observability-health-check,platform-observability-logging,platform-observability-metrics"
+  enServiceClients: "platform-manageability-agent"
+  enOutboundClients: " "
   enMetricsEnabled: {{ env "EOM_ENABLE_O11Y" | default "false" }}
   enTokenClients: "node-agent,platform-manageability-agent,platform-observability-agent,platform-telemetry-agent,prometheus"
   tinkerbell:
