@@ -142,8 +142,24 @@ infra-onboarding:
   disableO11yProfile: {{ if eq (env "EOM_ENABLE_O11Y") "true" }}false{{ else }}true{{ end }}
 
 # ─── CORS ────────────────────────────────────────────────────────────────────
+# By default the values template auto-injects https://<clusterDomain> and
+# https://web-ui.<clusterDomain> into the Traefik cors allow-list.
+#
+# Extra origins (e.g. http://localhost:8080 for running the UI on their local
+# machine) are OPT-IN and intended for development only. They are honored
+# only when BOTH of these are set:
+#   EOM_CORS_ALLOW_EXTRA_ORIGINS=true      (explicit dev opt-in; default false)
+#   EOM_CORS_EXTRA_ORIGINS="origin1,origin2"  (comma-separated list)
 cors:
   enabled: {{ env "EOM_CORS_ENABLED" | default "true" }}
+  {{- if eq (env "EOM_CORS_ALLOW_EXTRA_ORIGINS" | default "false") "true" }}
+  {{- with env "EOM_CORS_EXTRA_ORIGINS" }}
+  allowedOrigins:
+  {{- range $origin := splitList "," . }}
+    - {{ trim $origin }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
 
 # ─── UI settings ─────────────────────────────────────────────────────────────
 ui:
