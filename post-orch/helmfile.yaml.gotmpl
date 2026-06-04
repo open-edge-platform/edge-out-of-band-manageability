@@ -73,9 +73,6 @@ repositories:
   - name: edge-orch
     oci: true
     url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
-  - name: edge-orch-rs
-    oci: true
-    url: {{ env "EOM_REGISTRY" | default "registry-rs.edgeorchestration.intel.com" }}/edge-orch
 
 releases:
   #############################################################################
@@ -171,7 +168,7 @@ releases:
     namespace: istio-system
     chart: istio/base
     wait: true
-    version: 1.29.2
+    version: 1.30.0
     values:
       - values/istio-base.yaml
     condition: istio-base.enabled
@@ -205,7 +202,7 @@ releases:
     namespace: kyverno
     chart: kyverno/kyverno
     wait: true
-    version: 3.8.0
+    version: 3.8.1
     values:
       - values/kyverno.yaml
     condition: kyverno.enabled
@@ -237,7 +234,7 @@ releases:
     namespace: kyverno
     chart: edge-orch/common/charts/kyverno-extra-policies
     wait: true
-    version: 26.0.0
+    version: 26.0.1
     values:
       - values/kyverno-extra-policies.yaml
     condition: kyverno-extra-policies.enabled
@@ -256,7 +253,7 @@ releases:
     namespace: istio-system
     chart: istio/istiod
     wait: true
-    version: 1.29.2
+    version: 1.30.0
     values:
       - values/istiod.yaml.gotmpl
     needs:
@@ -271,7 +268,7 @@ releases:
     namespace: orch-platform
     chart: stakater/reloader
     wait: true
-    version: 2.2.11
+    version: 2.2.12
     values:
       - values/reloader.yaml
     condition: reloader.enabled
@@ -371,7 +368,7 @@ releases:
     namespace: istio-system
     chart: kiali/kiali-server
     wait: true
-    version: 2.25.0
+    version: 2.26.0
     values:
       - values/kiali.yaml
     condition: kiali.enabled
@@ -492,7 +489,7 @@ releases:
       app: secret-wait-tls-orch
       wave: "170"
     namespace: orch-gateway
-    chart: edge-orch-rs/common/charts/secret-wait
+    chart: edge-orch/common/charts/secret-wait
     wait: true
     version: 26.0.3
     values:
@@ -682,7 +679,7 @@ releases:
     namespace: kyverno
     chart: edge-orch/common/charts/kyverno-istio-policy
     wait: true
-    version: 26.0.0
+    version: 26.0.1
     values:
       - values/kyverno-istio-policy.yaml
     condition: kyverno-istio-policy.enabled
@@ -697,7 +694,7 @@ releases:
     namespace: kyverno
     chart: edge-orch/common/charts/kyverno-traefik-policy
     wait: true
-    version: 26.0.0
+    version: 26.0.1
     values:
       - values/kyverno-traefik-policy.yaml
     condition: kyverno-traefik-policy.enabled
@@ -812,7 +809,7 @@ releases:
       app: secret-wait-tls-boots
       wave: "1300"
     namespace: orch-boots
-    chart: edge-orch-rs/common/charts/secret-wait
+    chart: edge-orch/common/charts/secret-wait
     wait: true
     version: 26.0.2
     values:
@@ -997,7 +994,7 @@ releases:
     namespace: orch-infra
     chart: edge-orch/infra/charts/infra-onboarding
     wait: true
-    version: 1.36.2
+    version: 1.36.5
     values:
       - values/infra-onboarding.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -1048,7 +1045,7 @@ releases:
     namespace: orch-gateway
     chart: edge-orch/common/charts/certificate-file-server
     wait: true
-    version: 26.0.4
+    version: 26.0.5
     values:
       - values/certificate-file-server.yaml.gotmpl
       - values/resource-overrides.yaml
@@ -1065,7 +1062,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-admin
     wait: true
-    version: 4.0.12
+    version: 4.0.13
     values:
       - values/web-ui-admin.yaml.gotmpl
     condition: web-ui-admin.enabled
@@ -1081,7 +1078,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-infra
     wait: true
-    version: 4.0.9
+    version: 4.0.10
     values:
       - values/web-ui-infra.yaml.gotmpl
     condition: web-ui-infra.enabled
@@ -1102,7 +1099,7 @@ releases:
     namespace: orch-ui
     chart: edge-orch/orch-ui/charts/orch-ui-root
     wait: true
-    version: 4.0.15
+    version: 4.0.16
     values:
       - values/web-ui-root.yaml.gotmpl
     condition: web-ui-root.enabled
