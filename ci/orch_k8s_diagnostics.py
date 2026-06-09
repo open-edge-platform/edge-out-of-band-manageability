@@ -106,6 +106,7 @@ Key Benefits:
 ======================================================================================
 """
 
+import shlex
 import subprocess
 import sys
 import argparse
@@ -117,15 +118,26 @@ from datetime import datetime
 # --------------------------------------------------------------------------------------
 
 
-def run(cmd):
-    """Run a shell command and return stdout, handling errors gracefully."""
+def run(cmd, default=None):
+    """Run a shell command and return stdout, handling errors gracefully.
+    If default is provided, it is returned on any error.
+    If default is None, the original error string is returned instead.
+    """
+    # Note: the optional default return mechanism was added due to security scans forcing shell=False in the subprocess call.
+    # Without shell=True, we cannot use shell redirection.
+    # Calls to run that previously took the form of run("foo 2>/dev/null || echo '{}'") are now replaced with run("foo", default="{}")
+    args = shlex.split(cmd) if isinstance(cmd, str) else cmd
     try:
-        return subprocess.check_output(cmd, shell=True, timeout=120).decode(
+        return subprocess.check_output(args, shell=False, stderr=subprocess.DEVNULL, timeout=120).decode(
             "utf-8", errors="replace"
         )
     except subprocess.CalledProcessError as exc:
+        if default is not None:
+            return default
         return f"Error: {cmd}\nreturncode: {exc.returncode}\n{exc.output.decode('utf-8', errors='replace')}"
     except (subprocess.TimeoutExpired, OSError) as exc:
+        if default is not None:
+            return default
         return f"Error: {cmd}\n{exc}"
 
 
@@ -162,7 +174,7 @@ def check_argocd_apps():
         list: List of dicts containing unhealthy app details with comprehensive diagnostics
     """
     issues = []
-    apps = run("kubectl get applications -A -o json 2>/dev/null || echo '{}'")
+    apps = run("kubectl get applications -A -o json", default="{}")
     try:
         apps_json = json.loads(apps)
         for app in apps_json.get("items", []):
@@ -352,7 +364,7 @@ def check_deployment_readiness(ns):
     issues = []
 
     # Check Deployments
-    deps = run(f"kubectl get deployment -n {ns} -o json 2>/dev/null || echo '{{}}'")
+    deps = run(f"kubectl get deployment -n {ns} -o json", default="{}")
     try:
         for dep in json.loads(deps).get("items", []):
             spec_replicas = dep["spec"].get("replicas", 0)
@@ -395,7 +407,7 @@ def check_deployment_readiness(ns):
         pass
 
     # Check StatefulSets
-    sts = run(f"kubectl get statefulset -n {ns} -o json 2>/dev/null || echo '{{}}'")
+    sts = run(f"kubectl get statefulset -n {ns} -o json", default="{}")
     try:
         for st in json.loads(sts).get("items", []):
             spec_replicas = st["spec"].get("replicas", 0)
@@ -455,7 +467,7 @@ def check_pvc_status(ns):
         list: List of dicts with PVC issues (pvc name, status, namespace)
     """
     issues = []
-    pvcs = run(f"kubectl get pvc -n {ns} -o wide 2>/dev/null || echo ''")
+    pvcs = run(f"kubectl get pvc -n {ns} -o wide", default="")
     lines = pvcs.splitlines()
     if len(lines) <= 1:
         return issues
@@ -555,7 +567,7 @@ def gather_namespace_diagnostics(ns, restart_threshold, errors_only, include_log
 
     # --- Error states & Frequent Restarts ---
     # Get detailed JSON output for structured error extraction
-    pods_json = run(f"kubectl get pods -n {ns} -o json 2>/dev/null || echo '{{}}'")
+    pods_json = run(f"kubectl get pods -n {ns} -o json", default="{}")
     pods_data = {}
     try:
         for pod_obj in json.loads(pods_json).get("items", []):
